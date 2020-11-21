@@ -4,19 +4,88 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:padding="10dp"
     tools:context=".PostFormat1Activity">
 
-    <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="250dp"
-        android:layout_height="250dp"
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/cv_post"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_margin="10dp"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent">
 
-    <TextView
+        <FrameLayout
+            android:id="@+id/fotoBox"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:id="@+id/img_main"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="matrix" />
+
+            <EditText
+                android:id="@+id/edt_main"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:layout_marginBottom="20dp"
+                android:background="@android:color/transparent"
+                android:focusable="true"
+                android:gravity="center"
+                android:hint="ENTER YOUR TEXT"
+                android:textSize="20dp"
+                android:visibility="gone" />
+
+        </FrameLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+
+    <View
         android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray"
+        app:layout_constraintTop_toBottomOf="@id/cv_post"
+        app:layout_constraintBottom_toTopOf="@id/linearLayout"/>
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="match_parent"
+        android:layout_marginTop="20dp"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/imageView" />
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/cv_post"
+        app:layout_constraintStart_toStartOf="parent">
 
+        <ImageView
+            android:layout_width="75dp"
+            android:layout_height="75dp"
+            android:padding="15dp"
+            android:src="@drawable/ic_delete"
+            android:id="@+id/delete_item"/>
+
+        <ImageView
+            android:layout_width="75dp"
+            android:layout_height="75dp"
+            android:src="@drawable/ic_add_photo"
+            android:padding="10dp"
+            android:id="@+id/add_image"/>
+
+        <ImageView
+            android:layout_width="75dp"
+            android:layout_height="75dp"
+            android:padding="10dp"
+            android:src="@drawable/ic_text_fields"
+            android:id="@+id/add_text"/>
+
+    </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
