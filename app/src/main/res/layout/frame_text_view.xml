@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/text_layout"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:padding="20dp"
+    android:visibility="visible">
+
+    <ImageView
+        android:id="@+id/imgTextResize"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_gravity="center|top"
+        android:src="@drawable/icon_resize"
+        android:visibility="gone" />
+
+    <ImageView
+        android:id="@+id/imgTextClose"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_gravity="right|top"
+        android:src="@drawable/icon_delete"
+        android:visibility="gone" />
+
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp">
+
+        <EditText
+            android:id="@+id/textbubble"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:cursorVisible="false"
+            android:background="@android:color/transparent"
+            android:hint="ENTER YOUR TEXT"
+            android:textSize="30dp"
+            android:textStyle="bold" />
+    </FrameLayout>
+</FrameLayout>
+

@@ -17,79 +17,59 @@ import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import com.maxgen.multiTouchLib.MultiTouchListener
 import com.maxgen.postmakerapp.databinding.ActivityPostFormat1Binding
 import java.io.File
 import java.io.FileNotFoundException
 import java.io.FileOutputStream
 import java.io.IOException
+import java.util.*
 
 
-class PostFormat1Activity : AppCompatActivity(), View.OnTouchListener, View.OnClickListener {
+class PostFormat1Activity : AppCompatActivity(), View.OnClickListener {
 
     private lateinit var binding: ActivityPostFormat1Binding
-    var matrix: Matrix = Matrix()
-    var savedMatrix: Matrix = Matrix()
 
-    private var imageview: ImageView? = null
-    var dX: Float = 0f
-    var dY: kotlin.Float = 0f
-
-    // We can be in one of these 3 states
-    val NONE = 0
-    val DRAG = 1
-    val ZOOM = 2
-    var mode = NONE
-
-    // Remember some things for zooming
-    var start = PointF()
-    var mid = PointF()
-    var oldDist = 1f
-    var scaleGestureDetector: ScaleGestureDetector? = null
-    private var mScaleFactor = 1.0f
-
+    private var image: ImageView? = null
+    private var textView: View? = null
+    private var imageView: View? = null
+    private var removeText: ImageView? = null
+    private var editText:EditText?=null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityPostFormat1Binding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        //   binding.imgMain.setOnTouchListener(this)
-
-        //   binding.imgMain.performClick()
 
         binding.addImage.setOnClickListener(this)
 
-      //  checkItemAvailability()
-        scaleGestureDetector = ScaleGestureDetector(this, ScaleListener(mScaleFactor,imageview))
+        //  checkItemAvailability()
 
         binding.addText.setOnClickListener {
-            val editText=EditText(this)
-            val params: FrameLayout.LayoutParams = FrameLayout.LayoutParams(
-                FrameLayout.LayoutParams.WRAP_CONTENT,
-                FrameLayout.LayoutParams.WRAP_CONTENT
-            )
+            textView = layoutInflater.inflate(R.layout.frame_text_view, binding.fotoBox, false)
+            binding.fotoBox.addView(textView)
 
-            // Add image path from drawable folder.
+            removeText = textView?.findViewById<ImageView>(R.id.imgTextClose)
+            editText = textView?.findViewById(R.id.textbubble)
+            val frame:FrameLayout?=textView?.findViewById(R.id.text_layout)
 
-            // Add image path from drawable folder.
+            textView!!.setOnTouchListener(MultiTouchListener())
 
-            editText.hint="ENTER TEXT HERE"
-            editText.layoutParams = params
-            binding.fotoBox.addView(editText)
-            editText.setOnTouchListener(this)
-            editText.setBackgroundColor(resources.getColor(android.R.color.transparent))
-            editText.setHintTextColor(Color.parseColor("#000000"))
-            editText.setTextColor(Color.parseColor("#000000"))
-            editText.isFocusable = true
-            editText.requestFocus()
+
+//            removeText?.setOnClickListener {
+//                Toast.makeText(this, "clicked", Toast.LENGTH_SHORT).show()
+//                binding.fotoBox.removeView(currentFocus?.rootView)
+//            }
 
         }
 
         binding.deleteItem.setOnClickListener {
-            binding.fotoBox.removeAllViewsInLayout()
 
+            binding.fotoBox.removeAllViewsInLayout()
         }
 
-        binding.edtMain.setOnTouchListener(this)
+        binding.edtMain.setOnTouchListener(MultiTouchListener())
+
         binding.edtMain.setOnLongClickListener {
             val builder = AlertDialog.Builder(this)
             builder.setTitle("Remove Selected Text?")
@@ -110,39 +90,6 @@ class PostFormat1Activity : AppCompatActivity(), View.OnTouchListener, View.OnCl
         if (binding.imgMain.drawable != null) {
             binding.deleteItem.visibility = View.VISIBLE
         } else binding.deleteItem.visibility = View.GONE
-    }
-
-    private fun spacing(event: MotionEvent): Float {
-        val x = event.getX(0) - event.getX(1)
-        val y = event.getY(0) - event.getY(1)
-        return kotlin.math.sqrt((x * x + y * y).toDouble()).toFloat()
-    }
-
-    private fun midPoint(point: PointF, event: MotionEvent) {
-        val x = event.getX(0) + event.getX(1)
-        val y = event.getY(0) + event.getY(1)
-        point.set(x / 2, y / 2)
-    }
-
-    override fun onTouch(v: View, event: MotionEvent): Boolean {
-        scaleGestureDetector?.onTouchEvent(event)
-
-        when (event.action) {
-            MotionEvent.ACTION_DOWN -> {
-                dX = v.x - event.rawX
-                dY = v.y - event.rawY
-            }
-            MotionEvent.ACTION_MOVE -> {
-                v.animate()
-                    .x(event.rawX + dX)
-                    .y(event.rawY + dY)
-                    .setDuration(0)
-                    .start()
-            }
-
-            else -> return false
-        }
-        return true
     }
 
     override fun onClick(v: View?) {
@@ -190,20 +137,16 @@ class PostFormat1Activity : AppCompatActivity(), View.OnTouchListener, View.OnCl
                     var bitmap: Bitmap? = null
                     try {
                         bitmap = MediaStore.Images.Media.getBitmap(this.contentResolver, imageUri)
-                        imageview = ImageView(this)
-                        val params: FrameLayout.LayoutParams = FrameLayout.LayoutParams(
-                            FrameLayout.LayoutParams.WRAP_CONTENT,
-                            FrameLayout.LayoutParams.WRAP_CONTENT
+
+                        imageView = layoutInflater.inflate(
+                            R.layout.frame_image_view,
+                            binding.fotoBox,
+                            false
                         )
-
-                        // Add image path from drawable folder.
-
-                        // Add image path from drawable folder.
-                        imageview?.setImageBitmap(bitmap)
-                        imageview?.layoutParams = params
-                        imageview?.scaleType = ImageView.ScaleType.MATRIX
-                        binding.fotoBox.addView(imageview)
-                        imageview?.setOnTouchListener(this)
+                        image = imageView?.findViewById(R.id.image_bubble)
+                        image?.setImageBitmap(bitmap)
+                        binding.fotoBox.addView(imageView)
+                        imageView?.setOnTouchListener(MultiTouchListener())
 
                     } catch (e: FileNotFoundException) {
                         e.printStackTrace()
@@ -297,6 +240,7 @@ class PostFormat1Activity : AppCompatActivity(), View.OnTouchListener, View.OnCl
             return true
         }
     }
+
     companion object {
         const val GET_FROM_CAMARA = 3
         const val GET_FROM_GALLERY = 4
