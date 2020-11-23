@@ -1,4 +1,4 @@
-package com.maxgen.multiTouchLib;
+package com.maxgen.postmakerapp.multiTouchLib;
 
 import android.view.MotionEvent;
 import android.view.View;
@@ -10,7 +10,7 @@ public class MultiTouchListener implements OnTouchListener {
     public boolean isRotateEnabled = true;
     public boolean isTranslateEnabled = true;
     public boolean isScaleEnabled = true;
-    public float minimumScale = 0.5f;
+    public float minimumScale = 0.1f;
     public float maximumScale = 10.0f;
     private int mActivePointerId = INVALID_POINTER_ID;
     private float mPrevX;
@@ -27,7 +27,6 @@ public class MultiTouchListener implements OnTouchListener {
         } else if (degrees < -180.0f) {
             degrees += 360.0f;
         }
-
         return degrees;
     }
 

@@ -1,8 +1,11 @@
+package com.maxgen.postmakerapp.multiTouchLib;
+
 import android.content.Context;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 
+//useless
 public class OnSwipeTouchListener implements View.OnTouchListener {
 
     private GestureDetector gestureDetector;

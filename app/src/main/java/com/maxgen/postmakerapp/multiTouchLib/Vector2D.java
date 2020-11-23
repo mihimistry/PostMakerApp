@@ -1,4 +1,4 @@
-package com.maxgen.multiTouchLib;
+package com.maxgen.postmakerapp.multiTouchLib;
 
 import android.annotation.SuppressLint;
 import android.graphics.PointF;

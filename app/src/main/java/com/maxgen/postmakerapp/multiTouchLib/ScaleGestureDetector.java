@@ -1,4 +1,4 @@
-package com.maxgen.multiTouchLib;
+package com.maxgen.postmakerapp.multiTouchLib;
 
 import android.util.Log;
 import android.view.MotionEvent;

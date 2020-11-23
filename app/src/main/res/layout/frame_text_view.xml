@@ -20,7 +20,7 @@
         android:layout_height="24dp"
         android:layout_gravity="right|top"
         android:src="@drawable/icon_delete"
-        android:visibility="gone" />
+        android:visibility="visible" />
 
     <FrameLayout
         android:layout_width="wrap_content"
@@ -31,8 +31,8 @@
             android:id="@+id/textbubble"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:cursorVisible="false"
             android:background="@android:color/transparent"
+            android:cursorVisible="false"
             android:hint="ENTER YOUR TEXT"
             android:textSize="30dp"
             android:textStyle="bold" />
