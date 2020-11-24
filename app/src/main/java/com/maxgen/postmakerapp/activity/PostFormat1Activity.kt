@@ -3,7 +3,6 @@ package com.maxgen.postmakerapp.activity
 import android.app.Activity
 import android.content.Context
 import android.content.ContextWrapper
-import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Canvas
@@ -79,6 +78,15 @@ class PostFormat1Activity : AppCompatActivity() {
             builder.show()
         }
 
+        binding.imgEditWeb.setOnClickListener {
+            binding.llMain.visibility = View.GONE
+            binding.llTextEdit.visibility = View.VISIBLE
+            binding.imgTextClose.visibility = View.VISIBLE
+            binding.imgEdit.visibility = View.GONE
+        }
+        binding.imgMain.setOnClickListener {
+
+        }
         binding.imgEdit.setOnClickListener {
             binding.llMain.visibility = View.GONE
             binding.llTextEdit.visibility = View.VISIBLE
@@ -93,15 +101,19 @@ class PostFormat1Activity : AppCompatActivity() {
             binding.imgEdit.visibility = View.VISIBLE
         }
 
+        binding.imgTextClose.setOnClickListener {
+            binding.edtMain.setText("")
+        }
         binding.imgTxtColor.setOnClickListener {
             ColorPickerDialog.Builder(this)
                 .setTitle("ColorPicker Dialog")
                 .setPreferenceName("MyColorPickerDialog")
                 .setPositiveButton("SELECT", object : ColorEnvelopeListener {
                     override fun onColorSelected(envelope: ColorEnvelope?, fromUser: Boolean) {
-                        Toast.makeText(this@PostFormat1Activity, "selected", Toast.LENGTH_SHORT)
-                            .show()
-                        binding.edtMain.setTextColor(envelope!!.color)
+                        if (binding.edtMain.isFocused)
+                            binding.edtMain.setTextColor(envelope!!.color)
+                        if (binding.edtWeb.isFocused)
+                            binding.edtWeb.setTextColor(envelope!!.color)
                     }
                 })
                 .setNegativeButton(
@@ -113,6 +125,11 @@ class PostFormat1Activity : AppCompatActivity() {
                 .show();
         }
         //  checkItemAvailability()
+
+        binding.addWebsite.setOnClickListener {
+            binding.webLayout.visibility = View.VISIBLE
+            binding.webLayout.setOnTouchListener(MultiTouchListener())
+        }
 
         binding.addText.setOnClickListener {
 
@@ -149,6 +166,7 @@ class PostFormat1Activity : AppCompatActivity() {
                         val takePicture = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
                         startActivityForResult(takePicture, GET_LOGO_FROM_CAMERA)
                     }
+
                     options[item] == "Choose from Gallery" -> {
                         val intent = Intent()
                         intent.type = "image/*"
@@ -169,24 +187,24 @@ class PostFormat1Activity : AppCompatActivity() {
         binding.deleteItem.setOnClickListener {
             binding.imgMain.setImageBitmap(null)
             binding.imgLogo.setImageBitmap(null)
-            binding.edtMain.visibility = View.GONE
+            binding.edtLayout.visibility = View.GONE
         }
 
         binding.imgTxtStyle.setOnClickListener {
-
-            if (binding.edtMain.typeface == Typeface.DEFAULT){
-                binding.edtMain.typeface = Typeface.DEFAULT_BOLD
-            }
-            if (binding.edtMain.typeface == Typeface.DEFAULT_BOLD){
-                binding.edtMain.setTypeface(binding.edtMain.typeface,Typeface.ITALIC)
-            }
-            if (binding.edtMain.typeface.isItalic){
-                binding.edtMain.typeface = Typeface.DEFAULT
+            when {
+                binding.edtMain.typeface == Typeface.DEFAULT -> {
+                    binding.edtMain.setTypeface(binding.edtMain.typeface, Typeface.BOLD)
+                }
+                binding.edtMain.typeface.isBold -> {
+                    binding.edtMain.setTypeface(binding.edtMain.typeface, Typeface.ITALIC)
+                }
+                binding.edtMain.typeface.isItalic -> {
+                    binding.edtMain.typeface == Typeface.DEFAULT
+                }
             }
         }
 
-
-
+        /*
         binding.edtMain.setOnLongClickListener {
             val builder = AlertDialog.Builder(this)
             builder.setTitle("Remove Selected Text?")
@@ -201,11 +219,10 @@ class PostFormat1Activity : AppCompatActivity() {
             builder.show()
             return@setOnLongClickListener true
         }
-    }
-
-    private fun setLayoutColor(envelope: ColorEnvelope?) {
+         */
 
     }
+
 
 //    override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
 //        if (editMode) {
@@ -321,7 +338,7 @@ class PostFormat1Activity : AppCompatActivity() {
 
         if (item.itemId == R.id.action_save) {
             binding.edtMain.isCursorVisible = false
-            val post: Bitmap? = viewToImage(binding.cvPost)
+            val post: Bitmap? = viewToImage(binding.fotoBox)
             if (post != null) {
                 saveToInternalStorage(post)
             }
@@ -329,7 +346,7 @@ class PostFormat1Activity : AppCompatActivity() {
 
         if (item.itemId == R.id.action_share) {
             binding.edtMain.isCursorVisible = false
-            val post: Bitmap? = viewToImage(binding.cvPost)
+            val post: Bitmap? = viewToImage(binding.fotoBox)
 
             val uri = Uri.parse(
                 MediaStore.Images.Media.insertImage(
