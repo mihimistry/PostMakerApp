@@ -1,9 +1,9 @@
 package com.maxgen.postmakerapp.activity
 
 import android.app.Activity
-import android.content.Context
 import android.content.ContextWrapper
 import android.content.Intent
+import android.content.res.AssetManager
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
@@ -11,17 +11,19 @@ import android.graphics.Typeface
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.EditText
 import android.widget.ImageView
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.maxgen.postmakerapp.R
+import com.maxgen.postmakerapp.adapter.FontAdapter
+import com.maxgen.postmakerapp.adapter.OnFontChangeListener
 import com.maxgen.postmakerapp.databinding.ActivityPostFormat1Binding
+import com.maxgen.postmakerapp.model.AssetModel
 import com.maxgen.postmakerapp.multiTouchLib.MultiTouchListener
 import com.skydoves.colorpickerview.ColorEnvelope
 import com.skydoves.colorpickerview.ColorPickerDialog
@@ -32,7 +34,7 @@ import java.io.FileOutputStream
 import java.io.IOException
 
 
-class PostFormat1Activity : AppCompatActivity() {
+class PostFormat1Activity : AppCompatActivity(), OnFontChangeListener {
 
     private lateinit var binding: ActivityPostFormat1Binding
 
@@ -42,6 +44,8 @@ class PostFormat1Activity : AppCompatActivity() {
     private var removeText: ImageView? = null
     private var removeImage: ImageView? = null
     private var editText: EditText? = null
+    private var list: ArrayList<AssetModel>? = null
+    private var fontAdapter: FontAdapter? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityPostFormat1Binding.inflate(layoutInflater)
@@ -84,9 +88,35 @@ class PostFormat1Activity : AppCompatActivity() {
             binding.imgTextClose.visibility = View.VISIBLE
             binding.imgEdit.visibility = View.GONE
         }
-        binding.imgMain.setOnClickListener {
 
+        binding.llDone.setOnClickListener {
+            binding.rv.visibility = View.GONE
+            binding.llDone.visibility = View.GONE
+            binding.llTextEdit.visibility = View.GONE
+            binding.llMain.visibility = View.VISIBLE
+            binding.imgTextClose.visibility = View.GONE
+            binding.imgEdit.visibility = View.VISIBLE
         }
+        binding.imgFont.setOnClickListener {
+            binding.llMain.visibility = View.GONE
+            binding.llTextEdit.visibility = View.GONE
+            binding.llDone.visibility = View.VISIBLE
+            binding.rv.visibility = View.VISIBLE
+            list = ArrayList()
+            val assetManager: AssetManager = this.resources.assets
+
+            val files = assetManager.list("fonts")
+            if (files != null) {
+                for (file in files) {
+                    list!!.add(AssetModel("fonts/$file"))
+                }
+                fontAdapter = FontAdapter(list!!, this, this)
+                binding.rv.adapter = fontAdapter
+                binding.rv.layoutManager =
+                    LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+            }
+        }
+
         binding.imgEdit.setOnClickListener {
             binding.llMain.visibility = View.GONE
             binding.llTextEdit.visibility = View.VISIBLE
@@ -234,9 +264,9 @@ class PostFormat1Activity : AppCompatActivity() {
 //    }
 
     private fun setLogo(bitmap: Bitmap?) {
-        binding.imgLogo.setImageBitmap(bitmap)
+        binding.imgLogo.addSticker(bitmap)
 
-        binding.imgLogo.setOnTouchListener(MultiTouchListener())
+        //binding.imgLogo.setOnTouchListener(MultiTouchListener())
     }
 
     private fun setImage(bitmap: Bitmap?) {
@@ -285,7 +315,6 @@ class PostFormat1Activity : AppCompatActivity() {
                     var bitmap: Bitmap? = null
                     try {
                         bitmap = MediaStore.Images.Media.getBitmap(this.contentResolver, imageUri)
-
                         setImage(bitmap)
 
                     } catch (e: FileNotFoundException) {
@@ -369,23 +398,14 @@ class PostFormat1Activity : AppCompatActivity() {
     }
 
     private fun saveToInternalStorage(bitmapImage: Bitmap) {
-        val cw = ContextWrapper(applicationContext)
-        val directory: File = cw.getDir("imageDir", Context.MODE_PRIVATE)
-        val file = File(directory, "UniqueFileName" + ".jpg")
-        if (!file.exists()) {
-            Log.d("path", file.toString())
-            var fos: FileOutputStream? = null
-            try {
-                fos = FileOutputStream(file)
-                bitmapImage.compress(Bitmap.CompressFormat.JPEG, 100, fos)
-                fos.flush()
-                fos.close()
-                Toast.makeText(this, "Post Saved", Toast.LENGTH_SHORT).show()
-
-            } catch (e: IOException) {
-                e.printStackTrace()
-            }
+        val path = File(ContextWrapper(this).filesDir, "MyAppName" + File.separator + "Images")
+        if (!path.exists()) {
+            path.mkdirs()
         }
+        val outFile = File(path, "imageName" + ".jpeg")
+        val outputStream = FileOutputStream(outFile)
+        bitmapImage.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
+        outputStream.close()
     }
 
     companion object {
@@ -394,5 +414,9 @@ class PostFormat1Activity : AppCompatActivity() {
 
         const val GET_LOGO_FROM_CAMERA = 5
         const val GET_LOGO_FROM_GALLERY = 6
+    }
+
+    override fun onFontChange(typeface: Typeface) {
+        binding.edtMain.typeface = typeface
     }
 }

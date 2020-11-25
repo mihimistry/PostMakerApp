@@ -39,20 +39,11 @@
                     android:scaleType="fitXY" />
             </FrameLayout>
 
-            <FrameLayout
-                android:id="@+id/logo_layout"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="bottom|start"
-                android:layout_marginStart="20dp"
-                android:layout_marginBottom="20dp"
-                android:visibility="visible">
-
-                <ImageView
-                    android:id="@+id/img_logo"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-            </FrameLayout>
+            <com.maxgen.postmakerapp.stickerView.StickerImageView
+                android:id="@+id/img_logo"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="bottom|start" />
 
             <FrameLayout
                 android:id="@+id/edt_layout"
@@ -67,7 +58,7 @@
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:layout_gravity="right|top"
-                    android:src="@drawable/icon_delete"
+                    android:src="@mipmap/icon_delete"
                     android:visibility="gone" />
 
                 <ImageButton
@@ -103,7 +94,7 @@
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:layout_gravity="right|top"
-                    android:src="@drawable/icon_delete"
+                    android:src="@mipmap/icon_delete"
                     android:visibility="gone" />
 
                 <ImageButton
@@ -125,7 +116,6 @@
                     android:hint="ENTER YOUR WEBSITE"
                     android:textSize="12dp" />
             </FrameLayout>
-
         </FrameLayout>
     </com.google.android.material.card.MaterialCardView>
 
@@ -140,6 +130,29 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
+
+        <LinearLayout
+            android:id="@+id/ll_done"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="5dp"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <ImageView
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:padding="10dp"
+                android:src="@drawable/ic_done" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Done"
+                android:textSize="12dp" />
+
+        </LinearLayout>
 
         <HorizontalScrollView
             android:id="@+id/ll_main"
@@ -161,7 +174,7 @@
                         android:id="@+id/delete_item"
                         android:layout_width="50dp"
                         android:layout_height="50dp"
-                        android:padding="15dp"
+                        android:padding="10dp"
                         android:src="@drawable/ic_delete" />
 
                     <TextView
@@ -292,7 +305,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Text Color"
+                        android:text="Color"
                         android:textSize="12dp" />
 
                 </LinearLayout>
@@ -314,7 +327,29 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Text Style"
+                        android:text="Style"
+                        android:textSize="12dp" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="5dp"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:id="@+id/img_font"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:padding="10dp"
+                        android:src="@drawable/ic_font" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Font"
                         android:textSize="12dp" />
 
                 </LinearLayout>
@@ -343,6 +378,12 @@
 
             </LinearLayout>
         </HorizontalScrollView>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone" />
     </LinearLayout>
 
 
