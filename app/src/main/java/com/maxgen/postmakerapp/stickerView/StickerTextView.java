@@ -25,7 +25,6 @@ import com.maxgen.postmakerapp.R;
 import java.util.ArrayList;
 import java.util.List;
 
-
 @SuppressLint("AppCompatCustomView")
 public class StickerTextView extends EditText {
     private enum ActionMode {
@@ -308,7 +307,6 @@ public class StickerTextView extends EditText {
         }// end of switch(mCurrentMode)
     }
 
-    //判断是否按在缩放按钮区域
     private boolean checkZoomIconTouched(float extraRadius) {
         float x = mZoomIcon.getX() - mDownX;
         float y = mZoomIcon.getY() - mDownY;
@@ -316,7 +314,6 @@ public class StickerTextView extends EditText {
         return distance_pow_2 <= (mIconRadius + extraRadius) * (mIconRadius + extraRadius);
     }
 
-    //判断是否按在删除按钮区域
     private boolean checkDeleteIconTouched(float extraRadius) {
         float x = mDeleteIcon.getX() - mDownX;
         float y = mDeleteIcon.getY() - mDownY;
@@ -324,7 +321,6 @@ public class StickerTextView extends EditText {
         return distance_pow_2 <= (mIconRadius + extraRadius) * (mIconRadius + extraRadius);
     }
 
-    //判断是否按在翻转按钮区域
     private boolean checkHorizontalFlipIconTouched(float extraRadius) {
         float x = mFlipIcon.getX() - mDownX;
         float y = mFlipIcon.getY() - mDownY;
@@ -332,7 +328,6 @@ public class StickerTextView extends EditText {
         return distance_pow_2 <= (mIconRadius + extraRadius) * (mIconRadius + extraRadius);
     }
 
-    //找到点击的区域属于哪个贴纸
     private Sticker findHandlingSticker() {
         for (int i = mStickers.size() - 1; i >= 0; i--) {
             if (isInStickerArea(mStickers.get(i), mDownX, mDownY)) {
@@ -359,7 +354,6 @@ public class StickerTextView extends EditText {
         return mHandlingSticker.getMappedCenterPoint();
     }
 
-    //计算两点形成的直线与x轴的旋转角度
     private float calculateRotation(MotionEvent event) {
         if (event == null || event.getPointerCount() < 2) return 0f;
         double x = event.getX(0) - event.getX(1);
@@ -375,7 +369,6 @@ public class StickerTextView extends EditText {
         return (float) Math.toDegrees(radians);
     }
 
-    //计算两点间的距离
     private float calculateDistance(MotionEvent event) {
         if (event == null || event.getPointerCount() < 2) return 0f;
         float x = event.getX(0) - event.getX(1);
@@ -403,9 +396,6 @@ public class StickerTextView extends EditText {
 
     }
 
-    //sticker的图片会过大或过小，需要转化
-    //step 1：使sticker图片的中心与View的中心重合
-    //step 2：计算缩放值，进行缩放
     private void transformSticker(Sticker sticker) {
         if (sticker == null) {
             Log.e(TAG, "transformSticker: the bitmapSticker is null or the bitmapSticker bitmap is null");
@@ -440,7 +430,6 @@ public class StickerTextView extends EditText {
         invalidate();
     }
 
-    //更
     public float[] getStickerPoints(Sticker sticker) {
         if (sticker == null) return new float[8];
 
