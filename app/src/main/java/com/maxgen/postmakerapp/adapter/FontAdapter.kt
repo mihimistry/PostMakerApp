@@ -29,16 +29,23 @@ class FontAdapter(
     }
 
     override fun onBindViewHolder(holder: FontViewHolder, position: Int) {
-        holder.textView.tag = "" + position
+
+        holder.textView.text
+        val i = position + 1
+        holder.textView.tag = "" + i
+
         val typeface = Typeface.createFromAsset(
-            context.assets, list[position].dirName
+            context.assets, list[i].dirName
         )
+
         holder.textView.typeface = typeface
+
         holder.textView.text = "Abcd"
 
         holder.textView.setOnClickListener {
             listener.onFontChange(typeface)
         }
+
     }
 
     override fun getItemCount(): Int {

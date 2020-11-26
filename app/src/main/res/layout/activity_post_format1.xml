@@ -76,7 +76,6 @@
                     android:layout_gravity="bottom|center"
                     android:layout_margin="20dp"
                     android:background="@android:color/transparent"
-                    android:focusable="true"
                     android:hint="ENTER YOUR TEXT"
                     android:textSize="20dp"
                     android:textStyle="bold" />
@@ -112,7 +111,6 @@
                     android:layout_gravity="bottom|center"
                     android:layout_margin="20dp"
                     android:background="@android:color/transparent"
-                    android:focusable="true"
                     android:hint="ENTER YOUR WEBSITE"
                     android:textSize="12dp" />
             </FrameLayout>
@@ -150,6 +148,32 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Done"
+                android:textSize="12dp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ll_default_font"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="5dp"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:text="Abcd"
+                android:textSize="20dp"
+                android:textStyle="bold"
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Default"
                 android:textSize="12dp" />
 
         </LinearLayout>

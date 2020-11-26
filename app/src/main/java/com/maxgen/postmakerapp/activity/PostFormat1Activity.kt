@@ -50,6 +50,9 @@ class PostFormat1Activity : AppCompatActivity(), OnFontChangeListener {
         super.onCreate(savedInstanceState)
         binding = ActivityPostFormat1Binding.inflate(layoutInflater)
         setContentView(binding.root)
+        binding.edtWeb.isFocusableInTouchMode = false
+        binding.edtMain.isFocusableInTouchMode = false
+
 
         binding.addImage.setOnClickListener {
             val options = arrayOf<CharSequence>("Take Photo", "Choose from Gallery", "Cancel")
@@ -85,27 +88,55 @@ class PostFormat1Activity : AppCompatActivity(), OnFontChangeListener {
         binding.imgEditWeb.setOnClickListener {
             binding.llMain.visibility = View.GONE
             binding.llTextEdit.visibility = View.VISIBLE
-            binding.imgTextClose.visibility = View.VISIBLE
-            binding.imgEdit.visibility = View.GONE
+
+            binding.imgWebClose.visibility = View.VISIBLE
+            binding.imgEditWeb.visibility = View.GONE
+
+            binding.imgTextClose.visibility = View.GONE
+            binding.imgEdit.visibility = View.VISIBLE
+
+            //binding.llFont.visibility=View.GONE
+
+
+            binding.edtWeb.isFocusableInTouchMode = true
+            binding.edtMain.isFocusable = false
+        }
+
+        binding.llDefaultFont.setOnClickListener {
+            if (binding.imgTextClose.visibility == View.VISIBLE) {
+                binding.edtMain.typeface = Typeface.DEFAULT
+            }
+            if (binding.imgWebClose.visibility == View.VISIBLE) {
+                binding.edtWeb.typeface = Typeface.DEFAULT
+            }
         }
 
         binding.llDone.setOnClickListener {
             binding.rv.visibility = View.GONE
             binding.llDone.visibility = View.GONE
+
+            binding.llDefaultFont.visibility = View.GONE
+
             binding.llTextEdit.visibility = View.GONE
             binding.llMain.visibility = View.VISIBLE
+
             binding.imgTextClose.visibility = View.GONE
             binding.imgEdit.visibility = View.VISIBLE
+
+            binding.imgWebClose.visibility = View.GONE
+            binding.imgEditWeb.visibility = View.VISIBLE
         }
         binding.imgFont.setOnClickListener {
             binding.llMain.visibility = View.GONE
             binding.llTextEdit.visibility = View.GONE
             binding.llDone.visibility = View.VISIBLE
             binding.rv.visibility = View.VISIBLE
+            binding.llDefaultFont.visibility = View.VISIBLE
             list = ArrayList()
             val assetManager: AssetManager = this.resources.assets
 
             val files = assetManager.list("fonts")
+
             if (files != null) {
                 for (file in files) {
                     list!!.add(AssetModel("fonts/$file"))
@@ -120,8 +151,18 @@ class PostFormat1Activity : AppCompatActivity(), OnFontChangeListener {
         binding.imgEdit.setOnClickListener {
             binding.llMain.visibility = View.GONE
             binding.llTextEdit.visibility = View.VISIBLE
+
             binding.imgTextClose.visibility = View.VISIBLE
             binding.imgEdit.visibility = View.GONE
+
+            binding.imgEditWeb.visibility = View.VISIBLE
+            binding.imgWebClose.visibility = View.GONE
+
+            // binding.llFont.visibility=View.GONE
+
+            binding.edtMain.isFocusableInTouchMode = true
+            binding.edtWeb.isFocusable = false
+
         }
 
         binding.imgDone.setOnClickListener {
@@ -129,11 +170,17 @@ class PostFormat1Activity : AppCompatActivity(), OnFontChangeListener {
             binding.llTextEdit.visibility = View.GONE
             binding.imgTextClose.visibility = View.GONE
             binding.imgEdit.visibility = View.VISIBLE
+            binding.imgWebClose.visibility = View.GONE
+            binding.imgEditWeb.visibility = View.VISIBLE
+            binding.edtWeb.isFocusable = false
+            binding.edtMain.isFocusable = false
+
         }
 
         binding.imgTextClose.setOnClickListener {
             binding.edtMain.setText("")
         }
+
         binding.imgTxtColor.setOnClickListener {
             ColorPickerDialog.Builder(this)
                 .setTitle("ColorPicker Dialog")
@@ -154,6 +201,7 @@ class PostFormat1Activity : AppCompatActivity(), OnFontChangeListener {
                 .setBottomSpace(12) // set a bottom space between the last slidebar and buttons.
                 .show();
         }
+
         //  checkItemAvailability()
 
         binding.addWebsite.setOnClickListener {
@@ -192,6 +240,7 @@ class PostFormat1Activity : AppCompatActivity(), OnFontChangeListener {
             builder.setItems(options) { dialog, item ->
 
                 when {
+
                     options[item] == "Take Photo" -> {
                         val takePicture = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
                         startActivityForResult(takePicture, GET_LOGO_FROM_CAMERA)
@@ -252,7 +301,6 @@ class PostFormat1Activity : AppCompatActivity(), OnFontChangeListener {
          */
 
     }
-
 
 //    override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
 //        if (editMode) {
@@ -411,12 +459,16 @@ class PostFormat1Activity : AppCompatActivity(), OnFontChangeListener {
     companion object {
         const val GET_FROM_CAMERA = 3
         const val GET_FROM_GALLERY = 4
-
         const val GET_LOGO_FROM_CAMERA = 5
         const val GET_LOGO_FROM_GALLERY = 6
     }
 
     override fun onFontChange(typeface: Typeface) {
-        binding.edtMain.typeface = typeface
+        if (binding.imgTextClose.visibility == View.VISIBLE) {
+            binding.edtMain.typeface = typeface
+        }
+        if (binding.imgWebClose.visibility == View.VISIBLE) {
+            binding.edtWeb.typeface = typeface
+        }
     }
 }
