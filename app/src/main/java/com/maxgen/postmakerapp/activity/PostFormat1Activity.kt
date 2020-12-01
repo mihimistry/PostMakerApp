@@ -2,14 +2,17 @@ package com.maxgen.postmakerapp.activity
 
 import android.app.Activity
 import android.content.ContextWrapper
+import android.content.DialogInterface
 import android.content.Intent
 import android.content.res.AssetManager
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Typeface
+import android.media.MediaScannerConnection
 import android.net.Uri
 import android.os.Bundle
+import android.os.Environment
 import android.provider.MediaStore
 import android.view.Menu
 import android.view.MenuItem
@@ -32,7 +35,6 @@ import java.io.File
 import java.io.FileNotFoundException
 import java.io.FileOutputStream
 import java.io.IOException
-
 
 class PostFormat1Activity : AppCompatActivity(), OnFontChangeListener {
 
@@ -61,10 +63,6 @@ class PostFormat1Activity : AppCompatActivity(), OnFontChangeListener {
             builder.setItems(options) { dialog, item ->
 
                 when {
-                    options[item] == "Take Photo" -> {
-                        val takePicture = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-                        startActivityForResult(takePicture, GET_FROM_CAMERA)
-                    }
 
                     options[item] == "Choose from Gallery" -> {
                         val intent = Intent()
@@ -95,8 +93,9 @@ class PostFormat1Activity : AppCompatActivity(), OnFontChangeListener {
             binding.imgTextClose.visibility = View.GONE
             binding.imgEdit.visibility = View.VISIBLE
 
-            //binding.llFont.visibility=View.GONE
-
+            binding.llDefaultFont.visibility = View.GONE
+            binding.llDone.visibility = View.GONE
+            binding.rv.visibility = View.GONE
 
             binding.edtWeb.isFocusableInTouchMode = true
             binding.edtMain.isFocusable = false
@@ -158,11 +157,13 @@ class PostFormat1Activity : AppCompatActivity(), OnFontChangeListener {
             binding.imgEditWeb.visibility = View.VISIBLE
             binding.imgWebClose.visibility = View.GONE
 
+            binding.llDefaultFont.visibility = View.GONE
+            binding.llDone.visibility = View.GONE
+            binding.rv.visibility = View.GONE
             // binding.llFont.visibility=View.GONE
 
             binding.edtMain.isFocusableInTouchMode = true
             binding.edtWeb.isFocusable = false
-
         }
 
         binding.imgDone.setOnClickListener {
@@ -174,7 +175,6 @@ class PostFormat1Activity : AppCompatActivity(), OnFontChangeListener {
             binding.imgEditWeb.visibility = View.VISIBLE
             binding.edtWeb.isFocusable = false
             binding.edtMain.isFocusable = false
-
         }
 
         binding.imgTextClose.setOnClickListener {
@@ -202,8 +202,6 @@ class PostFormat1Activity : AppCompatActivity(), OnFontChangeListener {
                 .show();
         }
 
-        //  checkItemAvailability()
-
         binding.addWebsite.setOnClickListener {
             binding.webLayout.visibility = View.VISIBLE
             binding.webLayout.setOnTouchListener(MultiTouchListener())
@@ -215,22 +213,6 @@ class PostFormat1Activity : AppCompatActivity(), OnFontChangeListener {
 
             binding.edtLayout.setOnTouchListener(MultiTouchListener())
 
-            /*
-            textView = layoutInflater.inflate(R.layout.frame_text_view, binding.fotoBox, false)
-            binding.fotoBox.addView(textView)
-
-            removeText = textView?.findViewById(R.id.imgTextClose)
-            editText = textView?.findViewById(R.id.textbubble)
-            val frame: FrameLayout? = textView?.findViewById(R.id.text_layout)
-
-            textView!!.setOnTouchListener(MultiTouchListener())
-
-            removeText?.setOnClickListener {
-                binding.fotoBox.removeView(frame)
-            }
-
-             */
-
         }
 
         binding.addLogo.setOnClickListener {
@@ -240,12 +222,6 @@ class PostFormat1Activity : AppCompatActivity(), OnFontChangeListener {
             builder.setItems(options) { dialog, item ->
 
                 when {
-
-                    options[item] == "Take Photo" -> {
-                        val takePicture = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-                        startActivityForResult(takePicture, GET_LOGO_FROM_CAMERA)
-                    }
-
                     options[item] == "Choose from Gallery" -> {
                         val intent = Intent()
                         intent.type = "image/*"
@@ -264,11 +240,22 @@ class PostFormat1Activity : AppCompatActivity(), OnFontChangeListener {
         }
 
         binding.deleteItem.setOnClickListener {
-            binding.imgMain.setImageBitmap(null)
-            binding.imgLogo.setImageBitmap(null)
-            binding.edtLayout.visibility = View.GONE
-        }
+            val alertBuilder = AlertDialog.Builder(this)
+                .setTitle("Are you sure?")
+                .setMessage("All items in your post will be removed")
+                .setPositiveButton("YES", DialogInterface.OnClickListener { dialog, which ->
+                    binding.imgMain.setImageBitmap(null)
+                    binding.imgLogo.removeSticker()
+                    binding.edtLayout.visibility = View.GONE
+                    binding.webLayout.visibility = View.GONE
 
+                })
+                .setNegativeButton("NO", DialogInterface.OnClickListener { dialog, which ->
+                    dialog.dismiss()
+
+                })
+            alertBuilder.show()
+        }
         binding.imgTxtStyle.setOnClickListener {
             when {
                 binding.edtMain.typeface == Typeface.DEFAULT -> {
@@ -283,38 +270,10 @@ class PostFormat1Activity : AppCompatActivity(), OnFontChangeListener {
             }
         }
 
-        /*
-        binding.edtMain.setOnLongClickListener {
-            val builder = AlertDialog.Builder(this)
-            builder.setTitle("Remove Selected Text?")
-            builder.setPositiveButton("Yes", DialogInterface.OnClickListener { dialog, which ->
-                binding.edtMain.setText("")
-                binding.edtMain.visibility = View.GONE
-                dialog.dismiss()
-            })
-            builder.setNegativeButton("No", DialogInterface.OnClickListener { dialog, which ->
-                dialog.dismiss()
-            })
-            builder.show()
-            return@setOnLongClickListener true
-        }
-         */
-
     }
-
-//    override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
-//        if (editMode) {
-//            menu?.getItem(R.id.action_save)?.isVisible = false
-//            menu?.getItem(R.id.action_share)?.isVisible = false
-//            menu?.getItem(R.id.action_done)?.isVisible = true
-//        }
-//        return super.onPrepareOptionsMenu(menu)
-//    }
 
     private fun setLogo(bitmap: Bitmap?) {
         binding.imgLogo.addSticker(bitmap)
-
-        //binding.imgLogo.setOnTouchListener(MultiTouchListener())
     }
 
     private fun setImage(bitmap: Bitmap?) {
@@ -323,45 +282,18 @@ class PostFormat1Activity : AppCompatActivity(), OnFontChangeListener {
 
         binding.imgMain.setOnTouchListener(MultiTouchListener())
 
-        /*
-        imageView = layoutInflater.inflate(
-            R.layout.frame_image_view,
-            binding.fotoBox,
-            false
-        )
-
-        image = imageView?.findViewById(R.id.image_bubble)
-        image?.setImageBitmap(bitmap)
-        binding.fotoBox.addView(imageView)
-        removeImage = imageView?.findViewById(R.id.imgImageClose)
-
-        val frame: FrameLayout? = imageView?.findViewById(R.id.image_layout)
-
-        imageView!!.setOnTouchListener(MultiTouchListener())
-
-         */
-
-    }
-
-    private fun checkItemAvailability() {
-        if (binding.imgMain.drawable != null) {
-            binding.deleteItem.visibility = View.VISIBLE
-        } else binding.deleteItem.visibility = View.GONE
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode != Activity.RESULT_CANCELED) {
             when (requestCode) {
-                GET_FROM_CAMERA -> if (resultCode == Activity.RESULT_OK && data != null) {
-                    val selectedImage = data.extras!!["data"] as Bitmap?
-                    binding.imgMain.visibility = View.VISIBLE
-                    binding.imgMain.setImageBitmap(selectedImage)
-                }
+
                 GET_FROM_GALLERY -> if (resultCode == Activity.RESULT_OK && data != null) {
                     val imageUri = data.data
                     var bitmap: Bitmap? = null
                     try {
+
                         bitmap = MediaStore.Images.Media.getBitmap(this.contentResolver, imageUri)
                         setImage(bitmap)
 
@@ -372,19 +304,12 @@ class PostFormat1Activity : AppCompatActivity(), OnFontChangeListener {
                     }
                 }
 
-                GET_LOGO_FROM_CAMERA -> if (resultCode == Activity.RESULT_OK && data != null) {
-                    val selectedImage = data.extras!!["data"] as Bitmap?
-                    binding.imgLogo.visibility = View.VISIBLE
-                    binding.imgLogo.setImageBitmap(selectedImage)
-                }
                 GET_LOGO_FROM_GALLERY -> if (resultCode == Activity.RESULT_OK && data != null) {
                     val imageUri = data.data
                     var bitmap: Bitmap? = null
                     try {
                         bitmap = MediaStore.Images.Media.getBitmap(this.contentResolver, imageUri)
-
                         setLogo(bitmap)
-
                     } catch (e: FileNotFoundException) {
                         e.printStackTrace()
                     } catch (e: IOException) {
@@ -394,6 +319,7 @@ class PostFormat1Activity : AppCompatActivity(), OnFontChangeListener {
             }
         }
     }
+
 
     private fun viewToImage(view: View): Bitmap? {
 
@@ -417,11 +343,20 @@ class PostFormat1Activity : AppCompatActivity(), OnFontChangeListener {
             binding.edtMain.isCursorVisible = false
             val post: Bitmap? = viewToImage(binding.fotoBox)
             if (post != null) {
-                saveToInternalStorage(post)
+                saveToExternalStorage(post)
             }
         }
 
         if (item.itemId == R.id.action_share) {
+            if (binding.edtMain.text.isNullOrEmpty()) {
+                binding.edtMain.visibility = View.GONE
+            }
+
+            if (binding.edtWeb.text.isNullOrEmpty()) {
+                binding.edtWeb.visibility = View.GONE
+            }
+            binding.imgEditWeb.visibility = View.GONE
+            binding.imgEdit.visibility = View.GONE
             binding.edtMain.isCursorVisible = false
             val post: Bitmap? = viewToImage(binding.fotoBox)
 
@@ -445,6 +380,35 @@ class PostFormat1Activity : AppCompatActivity(), OnFontChangeListener {
         return super.onOptionsItemSelected(item)
     }
 
+    private fun saveToExternalStorage(image_bitmap: Bitmap) {
+        val root = getExternalFilesDir(Environment.DIRECTORY_PICTURES)?.absolutePath
+
+        val myDir = File(root, "/saved_images")
+        if (!myDir.exists()) {
+            myDir.mkdirs()
+        }
+        val fname = "Image-" + "image_name" + ".jpg"
+        val file = File(myDir, fname)
+        if (file.exists()) {
+            file.delete()
+        }
+        try {
+            file.createNewFile() // if file already exists will do nothing
+            val out = FileOutputStream(file)
+            image_bitmap.compress(Bitmap.CompressFormat.JPEG, 90, out)
+            out.flush()
+            out.close()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        MediaScannerConnection.scanFile(
+            this,
+            arrayOf<String>(file.toString()),
+            arrayOf<String>(file.getName()),
+            null
+        )
+    }
+
     private fun saveToInternalStorage(bitmapImage: Bitmap) {
         val path = File(ContextWrapper(this).filesDir, "MyAppName" + File.separator + "Images")
         if (!path.exists()) {
@@ -457,10 +421,8 @@ class PostFormat1Activity : AppCompatActivity(), OnFontChangeListener {
     }
 
     companion object {
-        const val GET_FROM_CAMERA = 3
-        const val GET_FROM_GALLERY = 4
-        const val GET_LOGO_FROM_CAMERA = 5
-        const val GET_LOGO_FROM_GALLERY = 6
+        const val GET_FROM_GALLERY = 3
+        const val GET_LOGO_FROM_GALLERY = 4
     }
 
     override fun onFontChange(typeface: Typeface) {

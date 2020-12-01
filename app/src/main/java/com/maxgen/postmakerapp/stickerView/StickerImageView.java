@@ -470,6 +470,33 @@ public class StickerImageView extends ImageView {
         invalidate();
     }
 
+    public void removeSticker() {
+        mCurrentMode = ActionMode.DELETE;
+    }
+
+    public void removeSticker(Drawable stickerDrawable) {
+        Sticker drawableSticker = new DrawableSticker(stickerDrawable);
+
+        float offsetX = (getWidth() - drawableSticker.getWidth()) / 2;
+        float offsetY = (getHeight() - drawableSticker.getHeight()) / 2;
+        drawableSticker.getMatrix().postTranslate(offsetX, offsetY);
+
+        float scaleFactor;
+        if (getWidth() < getHeight()) {
+            scaleFactor = (float) getWidth() / stickerDrawable.getIntrinsicWidth();
+        } else {
+            scaleFactor = (float) getHeight() / stickerDrawable.getIntrinsicWidth();
+        }
+
+        drawableSticker.getMatrix().postScale(scaleFactor / 2, scaleFactor / 2, getWidth() / 2, getHeight() / 2);
+
+        mHandlingSticker = drawableSticker;
+        mStickers.add(drawableSticker);
+
+        invalidate();
+    }
+
+
     public Bitmap save() {
         Bitmap bitmap = null;
         try {

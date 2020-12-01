@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activity.PostFormat1Activity">
+    tools:context=".activity.Template1Activity">
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/cv_post"
@@ -50,21 +50,21 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom|center"
-                android:layout_marginBottom="70dp"
-                android:visibility="gone">
+                android:layout_marginBottom="@dimen/_65sdp"
+                android:visibility="visible">
 
                 <ImageView
                     android:id="@+id/imgTextClose"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
+                    android:layout_width="@dimen/_18sdp"
+                    android:layout_height="@dimen/_18sdp"
                     android:layout_gravity="right|top"
                     android:src="@mipmap/icon_delete"
                     android:visibility="gone" />
 
                 <ImageButton
                     android:id="@+id/imgEdit"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
+                    android:layout_width="@dimen/_18sdp"
+                    android:layout_height="@dimen/_18sdp"
                     android:layout_gravity="right|top"
                     android:background="@drawable/ic_edit"
                     android:visibility="visible" />
@@ -74,10 +74,10 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="bottom|center"
-                    android:layout_margin="20dp"
+                    android:layout_margin="@dimen/_18sdp"
                     android:background="@android:color/transparent"
                     android:hint="ENTER YOUR TEXT"
-                    android:textSize="20dp"
+                    android:textSize="@dimen/_18sdp"
                     android:textStyle="bold" />
             </FrameLayout>
 
@@ -86,20 +86,20 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom|center"
-                android:visibility="gone">
+                android:visibility="visible">
 
                 <ImageView
                     android:id="@+id/imgWebClose"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
+                    android:layout_width="@dimen/_18sdp"
+                    android:layout_height="@dimen/_18sdp"
                     android:layout_gravity="right|top"
                     android:src="@mipmap/icon_delete"
                     android:visibility="gone" />
 
                 <ImageButton
                     android:id="@+id/imgEditWeb"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
+                    android:layout_width="@dimen/_18sdp"
+                    android:layout_height="@dimen/_18sdp"
                     android:layout_gravity="right|top"
                     android:background="@drawable/ic_edit"
                     android:visibility="visible" />
@@ -109,10 +109,10 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="bottom|center"
-                    android:layout_margin="20dp"
+                    android:layout_margin="@dimen/_18sdp"
                     android:background="@android:color/transparent"
                     android:hint="ENTER YOUR WEBSITE"
-                    android:textSize="12dp" />
+                    android:textSize="@dimen/_10sdp" />
             </FrameLayout>
         </FrameLayout>
     </com.google.android.material.card.MaterialCardView>
@@ -123,7 +123,7 @@
         android:layout_height="wrap_content"
         android:background="@color/light_grey"
         android:orientation="horizontal"
-        android:padding="10dp"
+        android:padding="@dimen/_8sdp"
         android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -148,9 +148,9 @@
 
                     <ImageView
                         android:id="@+id/delete_item"
-                        android:layout_width="50dp"
-                        android:layout_height="50dp"
-                        android:padding="10dp"
+                        android:layout_width="@dimen/_42sdp"
+                        android:layout_height="@dimen/_42sdp"
+                        android:padding="@dimen/_8sdp"
                         android:src="@drawable/ic_delete" />
 
                     <TextView
@@ -158,7 +158,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:text="Clear All"
-                        android:textSize="12dp" />
+                        android:textSize="@dimen/_10sdp" />
 
                 </LinearLayout>
 
@@ -180,7 +180,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:gravity="center"
-                        android:text="Add Background\nImage"
+                        android:text="Background Image"
                         android:textSize="12dp" />
 
                 </LinearLayout>
