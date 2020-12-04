@@ -55,6 +55,7 @@ class Template1Activity : AppCompatActivity(), OnAddImagesListener, OnTemplateCl
                         viewBinding.logo.layoutParams.height = 5 * progress
                         viewBinding.logo.requestLayout()
                     }
+
                     if (viewBinding.textResize.visibility == View.VISIBLE) {
 
                         if (edt_main.isFocused) {
@@ -66,14 +67,13 @@ class Template1Activity : AppCompatActivity(), OnAddImagesListener, OnTemplateCl
                             edt_web.requestLayout()
                         }
                     }
-                    viewBinding.tvPer.text = progress.toString()
+                    viewBinding.tvPer.text = "$progress%"
                 }
             }
 
             override fun onStartTrackingTouch(seekbar: SeekBar) {}
             override fun onStopTrackingTouch(seekbar: SeekBar) {}
         })
-
     }
 
     override fun getBackgroundImage() {
@@ -156,15 +156,31 @@ class Template1Activity : AppCompatActivity(), OnAddImagesListener, OnTemplateCl
     }
 
     override fun changeTextStyle() {
-        when {
-            viewBinding.edtMain.typeface == Typeface.DEFAULT -> {
-                viewBinding.edtMain.setTypeface(viewBinding.edtMain.typeface, Typeface.BOLD)
+        if (viewBinding.edtMain.isFocused) {
+            when {
+                viewBinding.edtMain.typeface == Typeface.DEFAULT -> {
+                    viewBinding.edtMain.setTypeface(viewBinding.edtMain.typeface, Typeface.BOLD)
+                }
+                viewBinding.edtMain.typeface.isBold -> {
+                    viewBinding.edtMain.setTypeface(viewBinding.edtMain.typeface, Typeface.ITALIC)
+                }
+                viewBinding.edtMain.typeface.isItalic -> {
+                    viewBinding.edtMain.typeface = Typeface.DEFAULT
+                }
             }
-            viewBinding.edtMain.typeface.isBold -> {
-                viewBinding.edtMain.setTypeface(viewBinding.edtMain.typeface, Typeface.ITALIC)
-            }
-            viewBinding.edtMain.typeface.isItalic -> {
-                viewBinding.edtMain.typeface = Typeface.DEFAULT
+        }
+
+        if (viewBinding.edtWeb.isFocused) {
+            when {
+                viewBinding.edtWeb.typeface == Typeface.DEFAULT -> {
+                    viewBinding.edtWeb.setTypeface(viewBinding.edtMain.typeface, Typeface.BOLD)
+                }
+                viewBinding.edtWeb.typeface.isBold -> {
+                    viewBinding.edtWeb.setTypeface(viewBinding.edtMain.typeface, Typeface.ITALIC)
+                }
+                viewBinding.edtWeb.typeface.isItalic -> {
+                    viewBinding.edtWeb.typeface = Typeface.DEFAULT
+                }
             }
         }
     }
@@ -204,8 +220,7 @@ class Template1Activity : AppCompatActivity(), OnAddImagesListener, OnTemplateCl
 
         viewBinding.llDefaultFont.visibility = View.GONE
 
-        viewBinding.llTextEdit.visibility = View.GONE
-        viewBinding.llMain.visibility = View.VISIBLE
+        viewBinding.llTextEdit.visibility = View.VISIBLE
 
     }
 

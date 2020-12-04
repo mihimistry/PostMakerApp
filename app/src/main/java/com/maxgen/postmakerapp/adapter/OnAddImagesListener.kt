@@ -2,5 +2,5 @@ package com.maxgen.postmakerapp.adapter
 
 interface OnAddImagesListener {
     fun getBackgroundImage()
-    fun getLogo()
+    fun getLogo(from: String)
 }

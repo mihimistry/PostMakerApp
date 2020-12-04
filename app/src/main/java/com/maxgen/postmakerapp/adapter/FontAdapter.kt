@@ -30,7 +30,6 @@ class FontAdapter(
 
     override fun onBindViewHolder(holder: FontViewHolder, position: Int) {
 
-        holder.textView.text
         val i = position + 1
         holder.textView.tag = "" + i
 

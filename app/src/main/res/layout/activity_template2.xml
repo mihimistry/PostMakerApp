@@ -14,7 +14,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/light_grey"
-        tools:context=".activity.Template1Activity">
+        tools:context=".activity.Template2Activity">
 
         <com.google.android.gms.ads.AdView
             android:id="@+id/adView"
@@ -48,37 +48,6 @@
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 
-
-                <!--
-                                <ImageView
-                                    android:layout_width="@dimen/_40sdp"
-                                    android:layout_height="@dimen/_40sdp"
-                                    android:layout_gravity="top|start"
-                                    android:layout_margin="@dimen/_10sdp"
-                                    android:src="@drawable/round_selector" />
-
-                                <ImageView
-                                    android:layout_width="@dimen/_40sdp"
-                                    android:layout_height="@dimen/_40sdp"
-                                    android:layout_gravity="top|end"
-                                    android:layout_margin="@dimen/_10sdp"
-                                    android:src="@drawable/round_selector" />
-
-                                <ImageView
-                                    android:layout_width="@dimen/_40sdp"
-                                    android:layout_height="@dimen/_40sdp"
-                                    android:layout_gravity="bottom|start"
-                                    android:layout_margin="@dimen/_10sdp"
-                                    android:src="@drawable/round_selector" />
-
-                                <ImageView
-                                    android:layout_width="@dimen/_40sdp"
-                                    android:layout_height="@dimen/_40sdp"
-                                    android:layout_gravity="bottom|end"
-                                    android:layout_margin="@dimen/_10sdp"
-                                    android:src="@drawable/round_selector" />
-                -->
-
                 <FrameLayout
                     android:id="@+id/dd"
                     android:layout_width="match_parent"
@@ -90,6 +59,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:scaleType="fitXY" />
+
                 </FrameLayout>
 
                 <com.maxgen.postmakerapp.stickerView.StickerImageView
@@ -99,6 +69,7 @@
                     android:layout_gravity="bottom|start" />
 
                 <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/constraint"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
 
@@ -106,8 +77,10 @@
                         android:id="@+id/logo"
                         android:layout_width="@dimen/_40sdp"
                         android:layout_height="@dimen/_40sdp"
+                        android:layout_margin="@dimen/_10sdp"
                         android:src="@drawable/ic_image"
-                        app:layout_constraintBottom_toTopOf="@+id/edt_main"
+                        android:visibility="invisible"
+                        app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
@@ -117,7 +90,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="@dimen/_20sdp"
-                        android:layout_marginBottom="@dimen/_25sdp"
+                        android:layout_marginBottom="@dimen/_35sdp"
                         android:background="@android:color/transparent"
                         android:gravity="center"
                         android:hint="YOUR QUOTE HERE"
@@ -129,10 +102,10 @@
 
                     <EditText
                         android:id="@+id/edt_web"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginHorizontal="@dimen/_20sdp"
-                        android:layout_marginVertical="@dimen/_15sdp"
+                        android:layout_marginHorizontal="@dimen/_60sdp"
+                        android:layout_marginVertical="@dimen/_25sdp"
                         android:background="@android:color/transparent"
                         android:gravity="center"
                         android:hint="YOUR WEBSITE NAME | CONTACT"
@@ -143,6 +116,55 @@
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
+                <FrameLayout
+                    android:id="@+id/ll_selector"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/light_grey"
+                    android:visibility="gone">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:text="Select a corner to place Logo"
+                        android:textSize="@dimen/_10sdp" />
+
+
+                    <ImageView
+                        android:layout_width="@dimen/_40sdp"
+                        android:layout_height="@dimen/_40sdp"
+                        android:layout_gravity="top|start"
+                        android:layout_margin="@dimen/_10sdp"
+                        android:onClick="@{viewModel::onTSCornerSelected}"
+                        android:src="@drawable/round_selector" />
+
+                    <ImageView
+                        android:layout_width="@dimen/_40sdp"
+                        android:layout_height="@dimen/_40sdp"
+                        android:layout_gravity="top|end"
+                        android:layout_margin="@dimen/_10sdp"
+                        android:onClick="@{viewModel::onTECornerSelected}"
+                        android:src="@drawable/round_selector" />
+
+                    <ImageView
+                        android:layout_width="@dimen/_40sdp"
+                        android:layout_height="@dimen/_40sdp"
+                        android:layout_gravity="bottom|start"
+                        android:layout_margin="@dimen/_10sdp"
+                        android:onClick="@{viewModel::onBSCornerSelected}"
+                        android:src="@drawable/round_selector" />
+
+                    <ImageView
+                        android:layout_width="@dimen/_40sdp"
+                        android:layout_height="@dimen/_40sdp"
+                        android:layout_gravity="bottom|end"
+                        android:layout_margin="@dimen/_10sdp"
+                        android:onClick="@{viewModel::onBECornerSelected}"
+                        android:src="@drawable/round_selector" />
+
+                </FrameLayout>
             </FrameLayout>
         </com.google.android.material.card.MaterialCardView>
 
@@ -289,6 +311,7 @@
                     </LinearLayout>
 
                     <LinearLayout
+                        android:id="@+id/ll_logo"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="5dp"
@@ -303,8 +326,10 @@
                             android:src="@drawable/ic_add_logo" />
 
                         <TextView
+                            android:id="@+id/tv_logo"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:text="@string/add_logo"
                             android:textSize="@dimen/_10sdp" />
 
                     </LinearLayout>

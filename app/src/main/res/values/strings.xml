@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">PostMakerApp</string>
+    <string name="add_logo">Add logo</string>
+    <string name="edit_logo">Edit Logo</string>
+
 </resources>
