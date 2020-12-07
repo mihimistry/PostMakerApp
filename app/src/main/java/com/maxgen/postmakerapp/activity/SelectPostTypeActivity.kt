@@ -14,12 +14,17 @@ class SelectPostTypeActivity : AppCompatActivity() {
         setContentView(viewBinding.root)
 
         MobileAds.initialize(this) {}
+
+        viewBinding.cvProfile.setOnClickListener {
+            startActivity(Intent(this, ProfileActivity::class.java))
+        }
+
         viewBinding.cvTemplate.setOnClickListener {
-            startActivity(Intent(this, Template2Activity::class.java))
+            startActivity(Intent(this, TemplateListActivity::class.java))
         }
 
         viewBinding.cvCreate.setOnClickListener {
-            startActivity(Intent(this, PostFormat1Activity::class.java))
+            startActivity(Intent(this, CreatePostActivity::class.java))
         }
     }
 }

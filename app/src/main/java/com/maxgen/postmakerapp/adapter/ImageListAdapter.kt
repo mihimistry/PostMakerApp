@@ -1,6 +1,9 @@
 package com.maxgen.postmakerapp.adapter
 
 import android.content.Context
+import android.content.res.AssetManager
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,6 +12,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.maxgen.postmakerapp.R
 import com.maxgen.postmakerapp.model.AssetModel
+import java.io.ByteArrayOutputStream
+import java.io.InputStream
+
 
 class ImageListAdapter(
     private val imageList: ArrayList<AssetModel>,
@@ -26,9 +32,19 @@ class ImageListAdapter(
     }
 
     override fun onBindViewHolder(holder: ImageViewModel, position: Int) {
-        Glide.with(context).load(imageList[position].dirName).into(holder.imageView)
+        val assetManager: AssetManager = context.assets
+
+        val inputStream: InputStream = assetManager.open(imageList[position].dirName)
+        val bitmap = BitmapFactory.decodeStream(inputStream)
+        inputStream.close()
+
+        Glide.with(context).load(bitmap).into(holder.imageView)
+
         holder.itemView.setOnClickListener {
-            listener.getLogoFromPostMaker(imageList[position].dirName)
+            val stream = ByteArrayOutputStream()
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)
+            val byteArray: ByteArray = stream.toByteArray()
+            listener.getLogoFromPostMaker(byteArray)
         }
     }
 

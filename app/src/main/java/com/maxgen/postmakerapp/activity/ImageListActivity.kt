@@ -1,9 +1,10 @@
 package com.maxgen.postmakerapp.activity
 
+import android.content.Intent
 import android.content.res.AssetManager
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.GridLayoutManager
 import com.maxgen.postmakerapp.adapter.ImageListAdapter
 import com.maxgen.postmakerapp.adapter.OnChooseLogoListener
 import com.maxgen.postmakerapp.databinding.ActivityImageListBinding
@@ -25,22 +26,24 @@ class ImageListActivity : AppCompatActivity(), OnChooseLogoListener {
         imageList = ArrayList()
         val assetManager: AssetManager = this.resources.assets
 
-        val files = assetManager.list("images")
+        val files = assetManager.list("background")
 
         if (files != null) {
             for (file in files) {
-                imageList!!.add(AssetModel("images/$file"))
+                imageList!!.add(AssetModel("background/$file"))
             }
             imageAdapter = ImageListAdapter(imageList!!, this, this)
             viewBinding.rvImages.adapter = imageAdapter
             viewBinding.rvImages.layoutManager =
-                LinearLayoutManager(this)
+                GridLayoutManager(this, 2)
         }
     }
 
-    override fun getLogoFromPostMaker(dirName: String) {
-        TODO("Not yet implemented")
+    override fun getLogoFromPostMaker(byteArray: ByteArray) {
+        val intent = Intent()
+        intent.putExtra("image", byteArray)
+        setResult(RESULT_OK, intent)
+        finish()
     }
-
 
 }

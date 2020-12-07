@@ -25,7 +25,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.maxgen.postmakerapp.R
 import com.maxgen.postmakerapp.adapter.FontAdapter
 import com.maxgen.postmakerapp.adapter.OnFontChangeListener
-import com.maxgen.postmakerapp.databinding.ActivityPostFormat1Binding
+import com.maxgen.postmakerapp.databinding.ActivityCreatePostBinding
 import com.maxgen.postmakerapp.model.AssetModel
 import com.maxgen.postmakerapp.multiTouchLib.MultiTouchListener
 import com.skydoves.colorpickerview.ColorEnvelope
@@ -36,9 +36,9 @@ import java.io.FileNotFoundException
 import java.io.FileOutputStream
 import java.io.IOException
 
-class PostFormat1Activity : AppCompatActivity(), OnFontChangeListener {
+class CreatePostActivity : AppCompatActivity(), OnFontChangeListener {
 
-    private lateinit var viewBinding: ActivityPostFormat1Binding
+    private lateinit var viewBinding: ActivityCreatePostBinding
 
     private var image: ImageView? = null
     private var textView: View? = null
@@ -51,11 +51,11 @@ class PostFormat1Activity : AppCompatActivity(), OnFontChangeListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewBinding = ActivityPostFormat1Binding.inflate(layoutInflater)
+        viewBinding = ActivityCreatePostBinding.inflate(layoutInflater)
         setContentView(viewBinding.root)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
         viewBinding.edtWeb.isFocusableInTouchMode = false
         viewBinding.edtMain.isFocusableInTouchMode = false
-
 
         viewBinding.addImage.setOnClickListener {
             val options = arrayOf<CharSequence>("Take Photo", "Choose from Gallery", "Cancel")
@@ -64,14 +64,13 @@ class PostFormat1Activity : AppCompatActivity(), OnFontChangeListener {
             builder.setItems(options) { dialog, item ->
 
                 when {
-
                     options[item] == "Choose from Gallery" -> {
                         val intent = Intent()
                         intent.type = "image/*"
                         intent.action = Intent.ACTION_GET_CONTENT
                         startActivityForResult(
-                                Intent.createChooser(intent, "Select Picture"),
-                                GET_FROM_GALLERY
+                            Intent.createChooser(intent, "Select Picture"),
+                            GET_FROM_GALLERY
                         )
                     }
 
@@ -144,7 +143,7 @@ class PostFormat1Activity : AppCompatActivity(), OnFontChangeListener {
                 fontAdapter = FontAdapter(list!!, this, this)
                 viewBinding.rv.adapter = fontAdapter
                 viewBinding.rv.layoutManager =
-                        LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+                    LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
             }
         }
 
@@ -184,23 +183,23 @@ class PostFormat1Activity : AppCompatActivity(), OnFontChangeListener {
 
         viewBinding.imgTxtColor.setOnClickListener {
             ColorPickerDialog.Builder(this)
-                    .setTitle("ColorPicker Dialog")
-                    .setPreferenceName("MyColorPickerDialog")
-                    .setPositiveButton("SELECT", object : ColorEnvelopeListener {
-                        override fun onColorSelected(envelope: ColorEnvelope?, fromUser: Boolean) {
-                            if (viewBinding.edtMain.isFocused)
-                                viewBinding.edtMain.setTextColor(envelope!!.color)
-                            if (viewBinding.edtWeb.isFocused)
-                                viewBinding.edtWeb.setTextColor(envelope!!.color)
-                        }
-                    })
-                    .setNegativeButton(
-                            "CANCEL"
-                    ) { dialog, _ -> dialog?.dismiss(); }
-                    .attachAlphaSlideBar(true) // the default value is true.
-                    .attachBrightnessSlideBar(true)  // the default value is true.
-                    .setBottomSpace(12) // set a bottom space between the last slidebar and buttons.
-                    .show();
+                .setTitle("ColorPicker Dialog")
+                .setPreferenceName("MyColorPickerDialog")
+                .setPositiveButton("SELECT", object : ColorEnvelopeListener {
+                    override fun onColorSelected(envelope: ColorEnvelope?, fromUser: Boolean) {
+                        if (viewBinding.edtMain.isFocused)
+                            viewBinding.edtMain.setTextColor(envelope!!.color)
+                        if (viewBinding.edtWeb.isFocused)
+                            viewBinding.edtWeb.setTextColor(envelope!!.color)
+                    }
+                })
+                .setNegativeButton(
+                    "CANCEL"
+                ) { dialog, _ -> dialog?.dismiss(); }
+                .attachAlphaSlideBar(true) // the default value is true.
+                .attachBrightnessSlideBar(true)  // the default value is true.
+                .setBottomSpace(12) // set a bottom space between the last slidebar and buttons.
+                .show();
         }
 
         viewBinding.addWebsite.setOnClickListener {
@@ -227,8 +226,8 @@ class PostFormat1Activity : AppCompatActivity(), OnFontChangeListener {
                         intent.type = "image/*"
                         intent.action = Intent.ACTION_GET_CONTENT
                         startActivityForResult(
-                                Intent.createChooser(intent, "Select Picture"),
-                                GET_LOGO_FROM_GALLERY
+                            Intent.createChooser(intent, "Select Picture"),
+                            GET_LOGO_FROM_GALLERY
                         )
                     }
                     options[item] == "Cancel" -> {
@@ -241,19 +240,19 @@ class PostFormat1Activity : AppCompatActivity(), OnFontChangeListener {
 
         viewBinding.deleteItem.setOnClickListener {
             val alertBuilder = AlertDialog.Builder(this)
-                    .setTitle("Are you sure?")
-                    .setMessage("All items in your post will be removed")
-                    .setPositiveButton("YES", DialogInterface.OnClickListener { dialog, which ->
-                        viewBinding.imgMain.setImageBitmap(null)
-                        viewBinding.imgLogo.removeSticker()
-                        viewBinding.edtLayout.visibility = View.GONE
-                        viewBinding.webLayout.visibility = View.GONE
+                .setTitle("Are you sure?")
+                .setMessage("All items in your post will be removed")
+                .setPositiveButton("YES", DialogInterface.OnClickListener { dialog, which ->
+                    viewBinding.imgMain.setImageBitmap(null)
+                    viewBinding.imgLogo.removeSticker()
+                    viewBinding.edtLayout.visibility = View.GONE
+                    viewBinding.webLayout.visibility = View.GONE
 
-                    })
-                    .setNegativeButton("NO", DialogInterface.OnClickListener { dialog, which ->
-                        dialog.dismiss()
+                })
+                .setNegativeButton("NO", DialogInterface.OnClickListener { dialog, which ->
+                    dialog.dismiss()
 
-                    })
+                })
             alertBuilder.show()
         }
         viewBinding.imgTxtStyle.setOnClickListener {
@@ -324,7 +323,7 @@ class PostFormat1Activity : AppCompatActivity(), OnFontChangeListener {
     private fun viewToImage(view: View): Bitmap? {
 
         val returnedBitmap =
-                Bitmap.createBitmap(view.width, view.height, Bitmap.Config.ARGB_8888)
+            Bitmap.createBitmap(view.width, view.height, Bitmap.Config.ARGB_8888)
         val canvas = Canvas(returnedBitmap)
         val bgDrawable = view.background
         if (bgDrawable != null) bgDrawable.draw(canvas) else canvas.drawColor(Color.WHITE)
@@ -361,12 +360,12 @@ class PostFormat1Activity : AppCompatActivity(), OnFontChangeListener {
             val post: Bitmap? = viewToImage(viewBinding.fotoBox)
 
             val uri = Uri.parse(
-                    MediaStore.Images.Media.insertImage(
-                            contentResolver,
-                            post,
-                            null,
-                            null
-                    )
+                MediaStore.Images.Media.insertImage(
+                    contentResolver,
+                    post,
+                    null,
+                    null
+                )
             )
 
             val share = Intent(Intent.ACTION_SEND)
@@ -402,10 +401,10 @@ class PostFormat1Activity : AppCompatActivity(), OnFontChangeListener {
             e.printStackTrace()
         }
         MediaScannerConnection.scanFile(
-                this,
-                arrayOf<String>(file.toString()),
-                arrayOf<String>(file.getName()),
-                null
+            this,
+            arrayOf<String>(file.toString()),
+            arrayOf<String>(file.getName()),
+            null
         )
     }
 
@@ -421,6 +420,8 @@ class PostFormat1Activity : AppCompatActivity(), OnFontChangeListener {
     }
 
     companion object {
+        const val GET_FROM_APP = 1
+        const val GET_LOGO_FROM_APP = 2
         const val GET_FROM_GALLERY = 3
         const val GET_LOGO_FROM_GALLERY = 4
     }
@@ -432,5 +433,10 @@ class PostFormat1Activity : AppCompatActivity(), OnFontChangeListener {
         if (viewBinding.imgWebClose.visibility == View.VISIBLE) {
             viewBinding.edtWeb.typeface = typeface
         }
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        finish()
+        return super.onSupportNavigateUp()
     }
 }

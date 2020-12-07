@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.content.res.AssetManager
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.Typeface
 import android.os.Bundle
 import android.provider.MediaStore
@@ -27,10 +28,8 @@ import kotlinx.android.synthetic.main.activity_template1.*
 import java.io.FileNotFoundException
 import java.io.IOException
 
-
 class Template2Activity : AppCompatActivity(), OnAddImagesListener, OnTemplateClickListeners,
-    OnCornerSelectionListener,OnChooseLogoListener,
-    OnFontChangeListener {
+    OnCornerSelectionListener, OnFontChangeListener {
     private lateinit var viewBinding: ActivityTemplate2Binding
     private var list: ArrayList<AssetModel>? = null
     private var fontAdapter: FontAdapter? = null
@@ -41,6 +40,7 @@ class Template2Activity : AppCompatActivity(), OnAddImagesListener, OnTemplateCl
         super.onCreate(savedInstanceState)
         viewBinding = ActivityTemplate2Binding.inflate(layoutInflater)
         setContentView(viewBinding.root)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         val adRequest = AdRequest.Builder().build()
         viewBinding.adView.loadAd(adRequest)
@@ -64,8 +64,7 @@ class Template2Activity : AppCompatActivity(), OnAddImagesListener, OnTemplateCl
                 viewModel?.onAddLogoSelected(this)
 
             if (viewBinding.tvLogo.text == resources.getString(R.string.edit_logo))
-                viewModel?.onEditLogoSelectd(this)
-
+                viewModel?.onEditLogoSelected(this)
         }
 
         viewBinding.seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
@@ -98,28 +97,39 @@ class Template2Activity : AppCompatActivity(), OnAddImagesListener, OnTemplateCl
         })
     }
 
-    override fun getBackgroundImage() {
-        val intent = Intent()
-        intent.type = "image/*"
-        intent.action = Intent.ACTION_GET_CONTENT
-        startActivityForResult(
-            Intent.createChooser(intent, "Select Picture"),
-            PostFormat1Activity.GET_FROM_GALLERY
-        )
-    }
-
-    override fun getLogo(from: String) {
-        if (from == "Gallery") {
+    override fun getBackgroundImage(s: String) {
+        if (s == resources.getString(R.string.from_gallery)) {
             val intent = Intent()
             intent.type = "image/*"
             intent.action = Intent.ACTION_GET_CONTENT
             startActivityForResult(
                 Intent.createChooser(intent, "Select Picture"),
-                PostFormat1Activity.GET_LOGO_FROM_GALLERY
+                CreatePostActivity.GET_FROM_GALLERY
             )
         }
-        if (from == "PostMaker") {
-            startActivity(Intent(this, ImageListActivity::class.java))
+        if (s == resources.getString(R.string.from_app)) {
+            startActivityForResult(
+                Intent(this, ImageListActivity::class.java),
+                CreatePostActivity.GET_FROM_APP
+            )
+        }
+    }
+
+    override fun getLogo(from: String) {
+        if (from == resources.getString(R.string.from_gallery)) {
+            val intent = Intent()
+            intent.type = "image/*"
+            intent.action = Intent.ACTION_GET_CONTENT
+            startActivityForResult(
+                Intent.createChooser(intent, "Select Picture"),
+                CreatePostActivity.GET_LOGO_FROM_GALLERY
+            )
+        }
+        if (from == resources.getString(R.string.from_app)) {
+            startActivityForResult(
+                Intent(this, ImageListActivity::class.java),
+                CreatePostActivity.GET_LOGO_FROM_APP
+            )
         }
     }
 
@@ -127,14 +137,31 @@ class Template2Activity : AppCompatActivity(), OnAddImagesListener, OnTemplateCl
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode != Activity.RESULT_CANCELED) {
             when (requestCode) {
-                PostFormat1Activity.GET_FROM_GALLERY -> if (resultCode == Activity.RESULT_OK && data != null) {
+                CreatePostActivity.GET_FROM_APP -> {
+                    if (resultCode == Activity.RESULT_OK && data != null) {
+                        val byteArray = data.getByteArrayExtra("image")
+                        val bitmap = BitmapFactory.decodeByteArray(byteArray, 0, byteArray!!.size)
+                        Glide.with(this).load(bitmap).into(viewBinding.imgMain)
+                    }
+                }
+                CreatePostActivity.GET_LOGO_FROM_APP -> {
+                    if (resultCode == Activity.RESULT_OK && data != null) {
+                        val byteArray = data.getByteArrayExtra("image")
+                        val bitmap = BitmapFactory.decodeByteArray(byteArray, 0, byteArray!!.size)
+                        Glide.with(this).load(bitmap).into(viewBinding.logo)
+                        viewBinding.llSelector.visibility = View.VISIBLE
+                        viewBinding.logo.visibility = View.VISIBLE
+                        viewBinding.constraint.visibility = View.GONE
+                        viewBinding.tvLogo.text = resources.getString(R.string.edit_logo)
+                    }
+                }
+                CreatePostActivity.GET_FROM_GALLERY -> if (resultCode == Activity.RESULT_OK && data != null) {
                     val selectedImage = data.data
                     var bitmap: Bitmap? = null
 
                     try {
                         bitmap =
                             MediaStore.Images.Media.getBitmap(this.contentResolver, selectedImage)
-                        viewBinding.llSelector.visibility = View.VISIBLE
                         viewBinding.imgMain.setImageBitmap(bitmap)
                     } catch (e: FileNotFoundException) {
                         e.printStackTrace()
@@ -142,7 +169,7 @@ class Template2Activity : AppCompatActivity(), OnAddImagesListener, OnTemplateCl
                         e.printStackTrace()
                     }
                 }
-                PostFormat1Activity.GET_LOGO_FROM_GALLERY -> if (resultCode == Activity.RESULT_OK && data != null) {
+                CreatePostActivity.GET_LOGO_FROM_GALLERY -> if (resultCode == Activity.RESULT_OK && data != null) {
                     val selectedImage = data.data
                     try {
 
@@ -256,7 +283,6 @@ class Template2Activity : AppCompatActivity(), OnAddImagesListener, OnTemplateCl
         viewBinding.llDone.visibility = View.GONE
         viewBinding.llDefaultFont.visibility = View.GONE
         viewBinding.llTextEdit.visibility = View.VISIBLE
-
     }
 
     override fun setDefaultFont() {
@@ -283,7 +309,6 @@ class Template2Activity : AppCompatActivity(), OnAddImagesListener, OnTemplateCl
     }
 
     override fun setLogoOnTSCorner() {
-
         val constraintSet = ConstraintSet()
         constraintSet.clone(viewBinding.constraint)
 
@@ -391,10 +416,10 @@ class Template2Activity : AppCompatActivity(), OnAddImagesListener, OnTemplateCl
         viewBinding.logo.setImageBitmap(null)
     }
 
-    override fun getLogoFromPostMaker(dirName: String) {
-        Glide.with(this).load(dirName).into(viewBinding.logo)
+    override fun onSupportNavigateUp(): Boolean {
+        finish()
+        return super.onSupportNavigateUp()
     }
-
 
 }
 

@@ -2,5 +2,6 @@
     <string name="app_name">PostMakerApp</string>
     <string name="add_logo">Add logo</string>
     <string name="edit_logo">Edit Logo</string>
-
+    <string name="from_gallery">Gallery</string>
+    <string name="from_app">PostMaker</string>
 </resources>

@@ -59,7 +59,6 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:scaleType="fitXY" />
-
                 </FrameLayout>
 
                 <com.maxgen.postmakerapp.stickerView.StickerImageView
@@ -74,6 +73,7 @@
                     android:layout_height="match_parent">
 
                     <ImageView
+
                         android:id="@+id/logo"
                         android:layout_width="@dimen/_40sdp"
                         android:layout_height="@dimen/_40sdp"
@@ -86,14 +86,16 @@
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <EditText
+
                         android:id="@+id/edt_main"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="@dimen/_20sdp"
                         android:layout_marginBottom="@dimen/_35sdp"
                         android:background="@android:color/transparent"
                         android:gravity="center"
                         android:hint="YOUR QUOTE HERE"
+                        android:inputType="textMultiLine|textNoSuggestions"
                         android:textSize="@dimen/_18sdp"
                         android:textStyle="bold"
                         app:layout_constraintBottom_toTopOf="@+id/edt_web"

@@ -12,10 +12,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MaterialComponents.Light.DarkActionBar">
-        <activity android:name=".activity.ImageListActivity"></activity>
-        <activity android:name=".activity.Template2Activity" />
-        <activity android:name=".activity.Template1Activity" />
-        <activity android:name=".activity.SelectPostTypeActivity">
+        <activity
+            android:name=".activity.ProfileActivity"
+            android:label="Profile"></activity>
+        <activity android:name=".activity.RegistrationActivity" />
+        <activity android:name=".activity.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -23,7 +24,22 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activity.PostFormat1Activity"
+            android:name=".activity.TemplateListActivity"
+            android:label="Select Template" />
+        <activity
+            android:name=".activity.ImageListActivity"
+            android:label="Choose Image" />
+        <activity
+            android:name=".activity.Template2Activity"
+            android:label="Post Template" />
+        <activity
+            android:name=".activity.Template1Activity"
+            android:label="Post Template" />
+        <activity android:name=".activity.SelectPostTypeActivity">
+
+        </activity>
+        <activity
+            android:name=".activity.CreatePostActivity"
             android:screenOrientation="portrait" />
         <activity android:name=".activity.MainActivity" />
 

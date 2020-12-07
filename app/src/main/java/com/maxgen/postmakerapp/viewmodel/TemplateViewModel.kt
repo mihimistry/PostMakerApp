@@ -5,6 +5,7 @@ import android.content.DialogInterface
 import android.view.View
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.ViewModel
+import com.maxgen.postmakerapp.R
 import com.maxgen.postmakerapp.adapter.OnAddImagesListener
 import com.maxgen.postmakerapp.adapter.OnCornerSelectionListener
 import com.maxgen.postmakerapp.adapter.OnTemplateClickListeners
@@ -16,14 +17,18 @@ class TemplateViewModel : ViewModel() {
     var cornerSelectionListener: OnCornerSelectionListener? = null
 
     fun onBackgroundImageSelected(view: View) {
-        val options = arrayOf<CharSequence>("Choose from Gallery", "Cancel")
+        val options = arrayOf<CharSequence>("from Gallery", "from PostMaker", "Cancel")
         val builder = AlertDialog.Builder(view.context)
-        builder.setTitle("Choose your Background Image")
+        builder.setTitle("Choose Background Image")
         builder.setItems(options) { dialog, item ->
 
             when {
-                options[item] == "Choose from Gallery" -> {
-                    imageListener?.getBackgroundImage()
+                options[item] == "from Gallery" -> {
+                    imageListener?.getBackgroundImage(view.context.resources.getString(R.string.from_gallery))
+                }
+
+                options[item] == "from PostMaker" -> {
+                    imageListener?.getBackgroundImage(view.context.resources.getString(R.string.from_app))
                 }
 
                 options[item] == "Cancel" -> {
@@ -37,16 +42,16 @@ class TemplateViewModel : ViewModel() {
     fun onAddLogoSelected(context: Context) {
         val options = arrayOf<CharSequence>("from Gallery", "from PostMaker", "Cancel")
         val builder = AlertDialog.Builder(context)
-        builder.setTitle("Choose your Logo")
+        builder.setTitle("Choose Logo")
         builder.setItems(options) { dialog, item ->
 
             when {
-                options[item] == "Choose from Gallery" -> {
-                    imageListener?.getLogo("Gallery")
+                options[item] == "from Gallery" -> {
+                    imageListener?.getLogo(context.resources.getString(R.string.from_gallery))
                 }
 
                 options[item] == "from PostMaker" -> {
-                    imageListener?.getLogo("PostMaker")
+                    imageListener?.getLogo(context.resources.getString(R.string.from_app))
                 }
 
                 options[item] == "Cancel" -> {
@@ -57,7 +62,7 @@ class TemplateViewModel : ViewModel() {
         builder.show()
     }
 
-    fun onEditLogoSelectd(context: Context) {
+    fun onEditLogoSelected(context: Context) {
         val options = arrayOf<CharSequence>(
             "Change logo",
             "Change logo Position",
@@ -83,7 +88,6 @@ class TemplateViewModel : ViewModel() {
                 }
             }).show()
     }
-
 
     fun onQuoteEditSelected(view: View) {
         clickListeners?.editText()
