@@ -67,6 +67,12 @@ class Template1Activity : AppCompatActivity(), OnAddImagesListener, OnTemplateCl
     private fun setUI() {
         val user = SharedPreferenceUser.getInstance().getUser(this)
         viewBinding.user = user
+        var webText = viewBinding.edtWeb.text.toString()
+        if (user.email.isNotEmpty() && user.phone.isNotEmpty()) {
+            viewBinding.edtWeb.setText(user.website + " | " + user.phone)
+        } else {
+            viewBinding.edtWeb.setText(user.website + user.phone)
+        }
 
         viewBinding.llLogo.setOnClickListener {
 
@@ -294,6 +300,10 @@ class Template1Activity : AppCompatActivity(), OnAddImagesListener, OnTemplateCl
         if (viewBinding.edtWeb.isFocused) {
             viewBinding.edtWeb.typeface = Typeface.DEFAULT
         }
+    }
+
+    override fun getPreviousActivity() {
+        finish()
     }
 
     override fun onFontChange(typeface: Typeface) {

@@ -8,5 +8,5 @@ interface OnTemplateClickListeners {
     fun doneTextEditing()
     fun doneChangeFont()
     fun setDefaultFont()
-
+    fun getPreviousActivity()
 }

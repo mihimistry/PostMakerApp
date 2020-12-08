@@ -294,6 +294,10 @@ class Template2Activity : AppCompatActivity(), OnAddImagesListener, OnTemplateCl
         }
     }
 
+    override fun getPreviousActivity() {
+        finish()
+    }
+
     override fun onFontChange(typeface: Typeface) {
         if (viewBinding.edtMain.isFocused) {
             viewBinding.edtMain.typeface = typeface

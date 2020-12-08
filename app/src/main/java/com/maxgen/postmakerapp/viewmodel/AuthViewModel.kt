@@ -20,6 +20,9 @@ class AuthViewModel : ViewModel() {
     var loginResponse: LiveData<UserModel>? = null
 
     fun onRegistrationClicked(view: View) {
+        if (website.isNotEmpty() && website.endsWith("/")) {
+            website = website.substring(0, website.length - 1);
+        }
         val user = UserModel(userName, email, pass, phone, website)
         signUpResponse = AuthRepository().createUser(user)
         registrationListener?.onUserRegister(signUpResponse!!)

@@ -424,6 +424,7 @@ class CreatePostActivity : AppCompatActivity(), OnFontChangeListener {
         const val GET_LOGO_FROM_APP = 2
         const val GET_FROM_GALLERY = 3
         const val GET_LOGO_FROM_GALLERY = 4
+        const val GET_FROM_CAMERA = 5
     }
 
     override fun onFontChange(typeface: Typeface) {

@@ -10,26 +10,20 @@ import com.maxgen.postmakerapp.model.UserModel
 class AuthRepository {
 
     fun createUser(user: UserModel): LiveData<String> {
-        var authResponse = MutableLiveData<String>()
+        val authResponse = MutableLiveData<String>()
         FirebaseAuth.getInstance().createUserWithEmailAndPassword(user.email, user.pass)
             .addOnCompleteListener {
                 if (it.isSuccessful) {
-                    authResponse = storeUser(user)
+                    FirebaseFirestore.getInstance().collection(UserModel.UserEnum.USER.name)
+                        .document(user.email)
+                        .set(user).addOnCompleteListener { store ->
+                            if (store.isSuccessful) {
+                                authResponse.value = "Registered Successfully"
+                            } else authResponse.value = store.exception.toString()
+                        }
                 } else authResponse.value = it.exception.toString()
             }
         return authResponse
-    }
-
-    private fun storeUser(user: UserModel): MutableLiveData<String> {
-        val registerResponse = MutableLiveData<String>()
-        FirebaseFirestore.getInstance().collection(UserModel.UserEnum.USER.name)
-            .document(user.email)
-            .set(user).addOnCompleteListener {
-                if (it.isSuccessful) {
-                    registerResponse.value = "Registered Successfully"
-                } else registerResponse.value = it.exception.toString()
-            }
-        return registerResponse
     }
 
     fun loginUser(email: String?, pass: String?): LiveData<UserModel> {
@@ -48,8 +42,7 @@ class AuthRepository {
                                 Log.e(TAG, "loginUser: ", error)
                             }
                         }
-                }
-                else Log.e(TAG, "loginUser: ",it.exception )
+                } else Log.e(TAG, "loginUser: ", it.exception)
             }
         return loginResponse
     }

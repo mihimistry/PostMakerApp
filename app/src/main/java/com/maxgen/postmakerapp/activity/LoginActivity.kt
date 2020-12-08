@@ -27,6 +27,10 @@ class LoginActivity : AppCompatActivity(), OnLoginListener {
         viewBinding.viewModel = viewModel
 
         viewModel.loginListener = this
+        if (preferences!!.contains(UserModel.UserEnum.email.name)) {
+            startActivity(Intent(this, SelectPostTypeActivity::class.java))
+            finish()
+        }
     }
 
     override fun onUserLogin(loginResponse: LiveData<UserModel>?) {

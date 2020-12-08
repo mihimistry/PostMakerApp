@@ -16,6 +16,7 @@
             android:name=".activity.ProfileActivity"
             android:label="Profile"></activity>
         <activity android:name=".activity.RegistrationActivity" />
+
         <activity android:name=".activity.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -23,18 +24,24 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity
             android:name=".activity.TemplateListActivity"
             android:label="Select Template" />
+
         <activity
             android:name=".activity.ImageListActivity"
             android:label="Choose Image" />
+
         <activity
             android:name=".activity.Template2Activity"
             android:label="Post Template" />
+
         <activity
             android:name=".activity.Template1Activity"
-            android:label="Post Template" />
+            android:label="Post Template"
+            android:theme="@style/AppTheme.NoActionBar" />
+
         <activity android:name=".activity.SelectPostTypeActivity">
 
         </activity>

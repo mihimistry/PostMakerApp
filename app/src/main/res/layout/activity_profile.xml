@@ -6,6 +6,10 @@
     <data>
 
         <variable
+            name="viewModel"
+            type="com.maxgen.postmakerapp.viewmodel.UserViewModel" />
+
+        <variable
             name="user"
             type="com.maxgen.postmakerapp.model.UserModel" />
     </data>
@@ -24,54 +28,74 @@
             android:text="@{user.userName}"
             android:textSize="@dimen/_20sdp"
             android:textStyle="bold"
-            app:layout_constraintBottom_toTopOf="@id/cv"
+            app:layout_constraintBottom_toTopOf="@id/frame"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/cv"
+        <FrameLayout
+            android:id="@+id/frame"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:theme="@style/ShapeAppearanceOverlay.App.Card.Media"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView">
 
-            <LinearLayout
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cv"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:orientation="vertical"
-                tools:context=".activity.ProfileActivity">
+                android:layout_marginTop="@dimen/_37sdp"
+                android:theme="@style/ShapeAppearanceOverlay.App.Card.Media"
+                app:cardElevation="@dimen/_5sdp">
 
-                <TextView
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="@dimen/_5sdp"
-                    android:gravity="center"
-                    android:text="@{user.email}"
-                    android:textSize="@dimen/_15sdp" />
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="@dimen/_40sdp"
+                    android:orientation="vertical"
+                    tools:context=".activity.ProfileActivity">
 
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="@dimen/_5sdp"
-                    android:gravity="center"
-                    android:text="@{user.phone}"
-                    android:textSize="@dimen/_15sdp" />
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/_5sdp"
+                        android:gravity="center"
+                        android:text="@{user.email}"
+                        android:textSize="@dimen/_15sdp" />
 
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="@dimen/_5sdp"
-                    android:gravity="center"
-                    android:text="@{user.website}"
-                    android:textSize="@dimen/_15sdp" />
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/_5sdp"
+                        android:gravity="center"
+                        android:text="@{user.phone}"
+                        android:textSize="@dimen/_15sdp" />
 
-            </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/_5sdp"
+                        android:gravity="center"
+                        android:text="@{user.website}"
+                        android:textSize="@dimen/_15sdp" />
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/profile_image"
+                android:layout_width="@dimen/_74sdp"
+                android:layout_height="@dimen/_74sdp"
+                android:layout_gravity="center_horizontal"
+                android:clickable="true"
+                android:elevation="@dimen/_6sdp"
+                android:focusable="true"
+                android:onClick="@{viewModel::onImageClick}"
+                app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.CornerSize20Percent" />
+
+        </FrameLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </layout>

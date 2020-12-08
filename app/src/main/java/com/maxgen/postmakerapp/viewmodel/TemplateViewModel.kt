@@ -133,4 +133,7 @@ class TemplateViewModel : ViewModel() {
         cornerSelectionListener?.setLogoOnBECorner()
     }
 
+    fun onBackPressed(view: View) {
+        clickListeners?.getPreviousActivity()
+    }
 }
