@@ -13,38 +13,43 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MaterialComponents.Light.DarkActionBar">
         <activity
+            android:name=".activity.ExitActivity"
+            android:screenOrientation="portrait"></activity>
+        <activity
             android:name=".activity.ProfileActivity"
-            android:label="Profile"></activity>
-        <activity android:name=".activity.RegistrationActivity" />
-
-        <activity android:name=".activity.LoginActivity">
+            android:label="Profile"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.RegistrationActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.LoginActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".activity.TemplateListActivity"
-            android:label="Select Template" />
-
+            android:label="Select Template"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".activity.ImageListActivity"
-            android:label="Choose Image" />
-
+            android:label="Choose Image"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".activity.Template2Activity"
-            android:label="Post Template" />
-
+            android:label="Post Template"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".activity.Template1Activity"
             android:label="Post Template"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".activity.SelectPostTypeActivity"></activity>
 
-        <activity android:name=".activity.SelectPostTypeActivity">
-
-        </activity>
         <activity
             android:name=".activity.CreatePostActivity"
             android:screenOrientation="portrait" />

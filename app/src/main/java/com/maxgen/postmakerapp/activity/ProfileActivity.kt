@@ -8,7 +8,6 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
@@ -55,7 +54,6 @@ class ProfileActivity : AppCompatActivity(), OnImageClickListener {
             Glide.with(this).load(it.imageUrl).into(viewBinding.profileImage)
         })
 
-
     }
 
     override fun onSupportNavigateUp(): Boolean {
@@ -77,7 +75,10 @@ class ProfileActivity : AppCompatActivity(), OnImageClickListener {
     }
 
     override fun removeImage() {
-        Toast.makeText(this, "remove Image", Toast.LENGTH_SHORT).show()
+        val user = SharedPreferenceUser.getInstance().getUser(this)
+        if (user.imageUrl.isNotEmpty())
+            viewModel?.removeProfileImage(user)
+
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -111,7 +112,11 @@ class ProfileActivity : AppCompatActivity(), OnImageClickListener {
     }
 
     private fun uploadToStorage(imageUri: Uri?) {
-        viewModel?.uploadImage(imageUri, SharedPreferenceUser.getInstance().getUser(this).email)
+        val user = SharedPreferenceUser.getInstance().getUser(this)
+        if (user.imageUrl.isNotEmpty())
+            viewModel?.changeProfileImage(user.imageUrl, imageUri, user.email)
+        else
+            viewModel?.uploadImage(imageUri, user.email)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

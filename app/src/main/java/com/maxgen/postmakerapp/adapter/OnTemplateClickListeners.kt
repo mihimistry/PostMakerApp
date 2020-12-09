@@ -9,4 +9,5 @@ interface OnTemplateClickListeners {
     fun doneChangeFont()
     fun setDefaultFont()
     fun getPreviousActivity()
+    fun addTextShadow()
 }

@@ -30,11 +30,10 @@ class FontAdapter(
 
     override fun onBindViewHolder(holder: FontViewHolder, position: Int) {
 
-        val i = position + 1
-        holder.textView.tag = "" + i
+        holder.textView.tag = "" + position
 
         val typeface = Typeface.createFromAsset(
-            context.assets, list[i].dirName
+            context.assets, list[position].dirName
         )
 
         holder.textView.typeface = typeface

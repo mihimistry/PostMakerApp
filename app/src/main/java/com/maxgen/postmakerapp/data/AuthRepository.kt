@@ -16,10 +16,10 @@ class AuthRepository {
                 if (it.isSuccessful) {
                     FirebaseFirestore.getInstance().collection(UserModel.UserEnum.USER.name)
                         .document(user.email)
-                        .set(user).addOnCompleteListener { store ->
-                            if (store.isSuccessful) {
+                        .set(user).addOnCompleteListener { task ->
+                            if (task.isSuccessful) {
                                 authResponse.value = "Registered Successfully"
-                            } else authResponse.value = store.exception.toString()
+                            } else authResponse.value = task.exception.toString()
                         }
                 } else authResponse.value = it.exception.toString()
             }

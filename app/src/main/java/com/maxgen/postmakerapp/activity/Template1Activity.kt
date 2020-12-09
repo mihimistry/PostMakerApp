@@ -5,6 +5,7 @@ import android.content.Intent
 import android.content.res.AssetManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Bundle
 import android.provider.MediaStore
@@ -68,7 +69,8 @@ class Template1Activity : AppCompatActivity(), OnAddImagesListener, OnTemplateCl
 
         val user = SharedPreferenceUser.getInstance().getUser(this)
         viewBinding.user = user
-        var webText = viewBinding.edtWeb.text.toString()
+        Glide.with(this).load(user.imageUrl).into(viewBinding.logo)
+
         if (user.email.isNotEmpty() && user.phone.isNotEmpty()) {
             viewBinding.edtWeb.setText(user.website + " | " + user.phone)
         } else {
@@ -102,6 +104,28 @@ class Template1Activity : AppCompatActivity(), OnAddImagesListener, OnTemplateCl
                         }
                         if (edt_web.isFocused) {
                             edt_web.textSize = progress.toFloat()
+                            edt_web.requestLayout()
+                        }
+                    }
+                    if (viewBinding.textResize.visibility == View.VISIBLE) {
+
+                        if (edt_main.isFocused) {
+                            viewBinding.edtMain
+                                .setShadowLayer(
+                                    3f,
+                                    progress / 10.toFloat(),
+                                    progress / 10.toFloat(),
+                                    Color.BLACK
+                                );
+                            edt_main.requestLayout()
+                        }
+                        if (edt_web.isFocused) {
+                            viewBinding.edtWeb.setShadowLayer(
+                                3f,
+                                progress.toFloat(),
+                                progress.toFloat(),
+                                Color.BLACK
+                            );
                             edt_web.requestLayout()
                         }
                     }
@@ -305,6 +329,12 @@ class Template1Activity : AppCompatActivity(), OnAddImagesListener, OnTemplateCl
 
     override fun getPreviousActivity() {
         finish()
+    }
+
+    override fun addTextShadow() {
+        viewBinding.textResize.visibility = View.GONE
+
+        viewBinding.textShadow.visibility = View.VISIBLE
     }
 
     override fun onFontChange(typeface: Typeface) {

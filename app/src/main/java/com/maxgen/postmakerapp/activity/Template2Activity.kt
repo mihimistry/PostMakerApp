@@ -298,6 +298,10 @@ class Template2Activity : AppCompatActivity(), OnAddImagesListener, OnTemplateCl
         finish()
     }
 
+    override fun addTextShadow() {
+        TODO("Not yet implemented")
+    }
+
     override fun onFontChange(typeface: Typeface) {
         if (viewBinding.edtMain.isFocused) {
             viewBinding.edtMain.typeface = typeface

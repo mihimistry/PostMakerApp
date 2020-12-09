@@ -6,6 +6,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
+import com.google.firebase.storage.FirebaseStorage
 import com.maxgen.postmakerapp.adapter.OnImageClickListener
 import com.maxgen.postmakerapp.data.UserRepository
 import com.maxgen.postmakerapp.model.UserModel
@@ -45,7 +46,6 @@ class UserViewModel : ViewModel() {
     }
 
     fun profileImage(context: Context) {
-        Toast.makeText(context, "image clicked", Toast.LENGTH_SHORT).show()
         val options = arrayOf<CharSequence>("Choose/Change Image", "Remove Image", "Cancel")
         val builder = AlertDialog.Builder(context)
         builder.setTitle("Profile Image")
@@ -65,6 +65,15 @@ class UserViewModel : ViewModel() {
             }
         }
         builder.show()
+    }
+
+    fun removeProfileImage(user: UserModel) {
+        UserRepository().removeImage(user)
+    }
+
+    fun changeProfileImage(imageUrl: String, imageUri: Uri?, email: String) {
+        UserRepository().updateImage(imageUrl, imageUri, email)
+
     }
 
 

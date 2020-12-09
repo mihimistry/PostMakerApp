@@ -105,6 +105,10 @@ class TemplateViewModel : ViewModel() {
         clickListeners?.changeTextFont()
     }
 
+    fun onTextShadowSelected(view: View) {
+        clickListeners?.addTextShadow()
+    }
+
     fun onTextEditingDoneSelected(view: View) {
         clickListeners?.doneTextEditing()
     }

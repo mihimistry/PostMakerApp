@@ -34,16 +34,16 @@
                 app:startIconDrawable="@drawable/ic_person">
 
                 <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/edt_username"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Organization/Person Name"
+                    android:hint="Organization/Person Name*"
                     android:inputType="text"
                     android:singleLine="true"
                     android:text="@={viewModel.userName}" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/email"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -52,9 +52,10 @@
                 app:startIconDrawable="@drawable/ic_email">
 
                 <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/edt_email"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Email"
+                    android:hint="Email*"
                     android:inputType="textEmailAddress"
                     android:singleLine="true"
                     android:text="@={viewModel.email}" />
@@ -67,15 +68,36 @@
                 android:layout_height="wrap_content"
                 android:layout_marginVertical="@dimen/_5sdp"
                 android:theme="@style/TextInput.Outlined"
+                app:passwordToggleEnabled="true"
                 app:startIconDrawable="@drawable/ic_pass">
 
                 <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/edt_pass"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Password"
+                    android:hint="Password*"
                     android:inputType="textPassword"
                     android:singleLine="true"
                     android:text="@={viewModel.pass}" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/cpass"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="@dimen/_5sdp"
+                android:theme="@style/TextInput.Outlined"
+                app:passwordToggleEnabled="true"
+                app:startIconDrawable="@drawable/ic_pass">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/edt_cpass"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Confirm Password*"
+                    android:inputType="textPassword"
+                    android:singleLine="true" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
@@ -88,13 +110,13 @@
                 app:startIconDrawable="@drawable/ic_phone">
 
                 <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/edt_mobile"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Phone No."
+                    android:hint="Phone No.*"
                     android:inputType="phone"
                     android:singleLine="true"
                     android:text="@={viewModel.phone}" />
-
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
@@ -107,6 +129,7 @@
                 app:startIconDrawable="@drawable/ic_web">
 
                 <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/edt_website"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="Website"
@@ -116,10 +139,10 @@
             </com.google.android.material.textfield.TextInputLayout>
 
             <Button
+                android:id="@+id/btn_register"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:onClick="@{viewModel::onRegistrationClicked}"
                 android:text="Register" />
 
         </LinearLayout>
@@ -140,9 +163,9 @@
                 android:text="already Registered?" />
 
             <TextView
+                android:id="@+id/tv_register"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:onClick="@{viewModel::onGoToLoginClicked}"
                 android:paddingHorizontal="@dimen/_10sdp"
                 android:text="Login"
                 android:textColor="@color/colorPrimary" />

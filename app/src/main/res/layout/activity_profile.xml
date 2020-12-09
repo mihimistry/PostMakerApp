@@ -15,6 +15,7 @@
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:background="@color/light_grey"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -46,7 +47,7 @@
                 android:id="@+id/cv"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginTop="@dimen/_37sdp"
+                android:layout_marginTop="@dimen/_47sdp"
                 android:theme="@style/ShapeAppearanceOverlay.App.Card.Media"
                 app:cardElevation="@dimen/_5sdp">
 
@@ -90,6 +91,7 @@
                 android:background="@android:color/white"
                 android:layout_width="@dimen/_74sdp"
                 android:layout_height="@dimen/_74sdp"
+                android:layout_marginTop="@dimen/_10sdp"
                 android:layout_gravity="center_horizontal"
                 android:clickable="true"
                 android:elevation="@dimen/_6sdp"
