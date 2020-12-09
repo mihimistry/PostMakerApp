@@ -32,10 +32,10 @@ class UserRepository {
 
         storageRef.putFile(imageUri!!).addOnSuccessListener {
             storageRef.downloadUrl.addOnSuccessListener {
-                val map = HashMap<Any, Any>()
+                val map = HashMap<String, Any>()
                 map[UserModel.UserEnum.imageUrl.name] = it.toString()
                 FirebaseFirestore.getInstance().collection("USER")
-                    .document(email).set(map)
+                    .document(email).update(map)
                     .addOnCompleteListener { task ->
                         if (task.isSuccessful) {
                             Log.d(TAG, "uploadImageToFirebase: Image Uploaded Successfully")

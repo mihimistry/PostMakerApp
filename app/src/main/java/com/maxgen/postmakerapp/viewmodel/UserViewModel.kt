@@ -1,7 +1,8 @@
 package com.maxgen.postmakerapp.viewmodel
 
+import android.content.Context
 import android.net.Uri
-import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
@@ -16,37 +17,14 @@ class UserViewModel : ViewModel() {
         return UserRepository().getUserDetails(email)
     }
 
-    fun onImageClick(view: View) {
-        val options = arrayOf<CharSequence>("Change Image", "Remove Image", "Cancel")
-        val builder = AlertDialog.Builder(view.context)
-        builder.setTitle("Choose Background Image")
-        builder.setItems(options) { dialog, item ->
-            when {
-                options[item] == "Change Image" -> {
-                    changeImage(view)
-                }
-
-                options[item] == "Remove Image" -> {
-                    imageListener?.removeImage()
-                }
-
-                options[item] == "Cancel" -> {
-                    dialog.dismiss()
-                }
-            }
-        }
-        builder.show()
-    }
-
-    private fun changeImage(view: View) {
+    private fun changeImage(context: Context) {
         val options = arrayOf<CharSequence>("from Camera", "from Gallery", "Cancel")
-        val builder = AlertDialog.Builder(view.context)
+        val builder = AlertDialog.Builder(context)
         builder.setTitle("Choose Background Image")
         builder.setItems(options) { dialog, item ->
 
             when {
                 options[item] == "from Camera" -> {
-
                     imageListener?.getImageFromCamera()
                 }
 
@@ -64,6 +42,29 @@ class UserViewModel : ViewModel() {
 
     fun uploadImage(imageUri: Uri?, email: String) {
         UserRepository().uploadImageToFirebase(imageUri, email)
+    }
+
+    fun profileImage(context: Context) {
+        Toast.makeText(context, "image clicked", Toast.LENGTH_SHORT).show()
+        val options = arrayOf<CharSequence>("Choose/Change Image", "Remove Image", "Cancel")
+        val builder = AlertDialog.Builder(context)
+        builder.setTitle("Profile Image")
+        builder.setItems(options) { dialog, item ->
+            when {
+                options[item] == "Choose/Change Image" -> {
+                    changeImage(context)
+                }
+
+                options[item] == "Remove Image" -> {
+                    imageListener?.removeImage()
+                }
+
+                options[item] == "Cancel" -> {
+                    dialog.dismiss()
+                }
+            }
+        }
+        builder.show()
     }
 
 

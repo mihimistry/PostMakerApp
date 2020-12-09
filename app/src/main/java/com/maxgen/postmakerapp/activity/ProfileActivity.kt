@@ -38,6 +38,9 @@ class ProfileActivity : AppCompatActivity(), OnImageClickListener {
         viewModel = ViewModelProvider(this).get(UserViewModel::class.java)
         setupUI()
 
+        viewBinding.profileImage.setOnClickListener {
+            viewModel?.profileImage(this)
+        }
     }
 
     private fun setupUI() {
@@ -46,6 +49,8 @@ class ProfileActivity : AppCompatActivity(), OnImageClickListener {
             viewModel?.getUserDetails(SharedPreferenceUser.getInstance().getUser(this).email)
 
         userDetails?.observe(this, Observer {
+            SharedPreferenceUser.getInstance().loginUser(it, this)
+
             viewBinding.user = it
             Glide.with(this).load(it.imageUrl).into(viewBinding.profileImage)
         })

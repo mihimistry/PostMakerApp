@@ -84,17 +84,18 @@
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <com.google.android.material.imageview.ShapeableImageView
+            <ImageView
+                android:padding="@dimen/_5sdp"
                 android:id="@+id/profile_image"
+                android:background="@android:color/white"
                 android:layout_width="@dimen/_74sdp"
                 android:layout_height="@dimen/_74sdp"
                 android:layout_gravity="center_horizontal"
                 android:clickable="true"
                 android:elevation="@dimen/_6sdp"
                 android:focusable="true"
-                android:onClick="@{viewModel::onImageClick}"
-                app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.CornerSize20Percent" />
-
+                android:scaleType="fitCenter"
+                />
         </FrameLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 

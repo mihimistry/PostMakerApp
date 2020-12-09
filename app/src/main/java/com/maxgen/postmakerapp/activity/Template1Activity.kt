@@ -65,6 +65,7 @@ class Template1Activity : AppCompatActivity(), OnAddImagesListener, OnTemplateCl
     }
 
     private fun setUI() {
+
         val user = SharedPreferenceUser.getInstance().getUser(this)
         viewBinding.user = user
         var webText = viewBinding.edtWeb.text.toString()
