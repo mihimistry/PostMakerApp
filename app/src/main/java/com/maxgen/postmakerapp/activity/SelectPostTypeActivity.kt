@@ -2,15 +2,10 @@ package com.maxgen.postmakerapp.activity
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.gms.ads.AdRequest
-import com.google.android.gms.ads.AdView
 import com.google.android.gms.ads.MobileAds
-import com.maxgen.postmakerapp.R
 import com.maxgen.postmakerapp.databinding.ActivitySelectPostTypeBinding
-
 
 class SelectPostTypeActivity : AppCompatActivity() {
     private lateinit var viewBinding: ActivitySelectPostTypeBinding
@@ -20,11 +15,16 @@ class SelectPostTypeActivity : AppCompatActivity() {
         setContentView(viewBinding.root)
 
         MobileAds.initialize(this) {}
+
+        val adRequest = AdRequest.Builder().build()
+        viewBinding.adView.loadAd(adRequest)
+
         setupUI()
 
     }
 
     private fun setupUI() {
+
         viewBinding.cvProfile.setOnClickListener {
             startActivity(Intent(this, ProfileActivity::class.java))
         }
@@ -40,5 +40,6 @@ class SelectPostTypeActivity : AppCompatActivity() {
 
     override fun onBackPressed() {
         startActivity(Intent(this, ExitActivity::class.java))
+        finish()
     }
 }

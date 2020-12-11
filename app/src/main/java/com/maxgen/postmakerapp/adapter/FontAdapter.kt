@@ -19,7 +19,6 @@ class FontAdapter(
 
     class FontViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val textView: TextView = itemView.findViewById(R.id.item_name)
-
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FontViewHolder {

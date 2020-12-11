@@ -2,6 +2,7 @@ package com.maxgen.postmakerapp.activity
 
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.gms.ads.AdRequest
 import com.maxgen.postmakerapp.databinding.ActivityExitBinding
@@ -12,7 +13,6 @@ class ExitActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         viewBinding = ActivityExitBinding.inflate(layoutInflater)
         setContentView(viewBinding.root)
-
         loadAd()
         setupUI()
     }
@@ -23,6 +23,9 @@ class ExitActivity : AppCompatActivity() {
     }
 
     private fun setupUI() {
+
+        Toast.makeText(this, "Back press again to exit", Toast.LENGTH_SHORT).show()
+
         viewBinding.btnNo.setOnClickListener {
             startActivity(Intent(this, SelectPostTypeActivity::class.java))
             finish()

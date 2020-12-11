@@ -3,11 +3,12 @@ package com.maxgen.postmakerapp.activity
 import android.app.Activity
 import android.content.Intent
 import android.content.res.AssetManager
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.graphics.Typeface
+import android.graphics.*
+import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.widget.SeekBar
 import androidx.appcompat.app.AppCompatActivity
@@ -20,16 +21,14 @@ import com.maxgen.postmakerapp.R
 import com.maxgen.postmakerapp.adapter.*
 import com.maxgen.postmakerapp.databinding.ActivityTemplate2Binding
 import com.maxgen.postmakerapp.model.AssetModel
+import com.maxgen.postmakerapp.utils.SharedPreferenceUser
 import com.maxgen.postmakerapp.viewmodel.TemplateViewModel
-import com.skydoves.colorpickerview.ColorEnvelope
-import com.skydoves.colorpickerview.ColorPickerDialog
-import com.skydoves.colorpickerview.listeners.ColorEnvelopeListener
 import kotlinx.android.synthetic.main.activity_template1.*
 import java.io.FileNotFoundException
 import java.io.IOException
 
 class Template2Activity : AppCompatActivity(), OnAddImagesListener, OnTemplateClickListeners,
-    OnCornerSelectionListener, OnFontChangeListener {
+        OnCornerSelectionListener, OnFontChangeListener {
     private lateinit var viewBinding: ActivityTemplate2Binding
     private var list: ArrayList<AssetModel>? = null
     private var fontAdapter: FontAdapter? = null
@@ -40,6 +39,8 @@ class Template2Activity : AppCompatActivity(), OnAddImagesListener, OnTemplateCl
         super.onCreate(savedInstanceState)
         viewBinding = ActivityTemplate2Binding.inflate(layoutInflater)
         setContentView(viewBinding.root)
+
+        setSupportActionBar(viewBinding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         val adRequest = AdRequest.Builder().build()
@@ -58,6 +59,19 @@ class Template2Activity : AppCompatActivity(), OnAddImagesListener, OnTemplateCl
     }
 
     private fun setUI() {
+        if (viewBinding.logo.drawable == null)
+            viewBinding.tvLogo.text = resources.getString(R.string.add_logo)
+        else viewBinding.tvLogo.text = resources.getString(R.string.edit_logo)
+
+        val user = SharedPreferenceUser.getInstance().getUser(this)
+        viewBinding.user = user
+        Glide.with(this).load(user.imageUrl).into(viewBinding.logo)
+
+        if (user.email.isNotEmpty() && user.phone.isNotEmpty()) {
+            viewBinding.edtWeb.setText(user.website + " | " + user.phone)
+        } else {
+            viewBinding.edtWeb.setText(user.website + user.phone)
+        }
 
         viewBinding.llLogo.setOnClickListener {
             if (viewBinding.tvLogo.text == resources.getString(R.string.add_logo))
@@ -65,6 +79,11 @@ class Template2Activity : AppCompatActivity(), OnAddImagesListener, OnTemplateCl
 
             if (viewBinding.tvLogo.text == resources.getString(R.string.edit_logo))
                 viewModel?.onEditLogoSelected(this)
+        }
+
+        viewBinding.toolbar.setOnMenuItemClickListener {
+            menuItemSelected(it)
+            return@setOnMenuItemClickListener false
         }
 
         viewBinding.seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
@@ -88,6 +107,28 @@ class Template2Activity : AppCompatActivity(), OnAddImagesListener, OnTemplateCl
                             edt_web.requestLayout()
                         }
                     }
+                    if (viewBinding.textShadow.visibility == View.VISIBLE) {
+
+                        if (edt_main.isFocused) {
+                            viewBinding.edtMain
+                                    .setShadowLayer(
+                                            (progress / 10).toFloat(),
+                                            (progress / 10).toFloat(),
+                                            (progress / 10).toFloat(),
+                                            Color.BLACK
+                                    );
+                            edt_main.requestLayout()
+                        }
+                        if (edt_web.isFocused) {
+                            viewBinding.edtWeb.setShadowLayer(
+                                    (progress / 10).toFloat(),
+                                    (progress / 10).toFloat(),
+                                    (progress / 10).toFloat(),
+                                    Color.BLACK
+                            );
+                            edt_web.requestLayout()
+                        }
+                    }
                     viewBinding.tvPer.text = "$progress%"
                 }
             }
@@ -103,14 +144,14 @@ class Template2Activity : AppCompatActivity(), OnAddImagesListener, OnTemplateCl
             intent.type = "image/*"
             intent.action = Intent.ACTION_GET_CONTENT
             startActivityForResult(
-                Intent.createChooser(intent, "Select Picture"),
-                CreatePostActivity.GET_FROM_GALLERY
+                    Intent.createChooser(intent, "Select Picture"),
+                    CreatePostActivity.GET_FROM_GALLERY
             )
         }
         if (s == resources.getString(R.string.from_app)) {
             startActivityForResult(
-                Intent(this, ImageListActivity::class.java),
-                CreatePostActivity.GET_FROM_APP
+                    Intent(this, ImageListActivity::class.java),
+                    CreatePostActivity.GET_FROM_APP
             )
         }
     }
@@ -121,14 +162,14 @@ class Template2Activity : AppCompatActivity(), OnAddImagesListener, OnTemplateCl
             intent.type = "image/*"
             intent.action = Intent.ACTION_GET_CONTENT
             startActivityForResult(
-                Intent.createChooser(intent, "Select Picture"),
-                CreatePostActivity.GET_LOGO_FROM_GALLERY
+                    Intent.createChooser(intent, "Select Picture"),
+                    CreatePostActivity.GET_LOGO_FROM_GALLERY
             )
         }
         if (from == resources.getString(R.string.from_app)) {
             startActivityForResult(
-                Intent(this, ImageListActivity::class.java),
-                CreatePostActivity.GET_LOGO_FROM_APP
+                    Intent(this, ImageListActivity::class.java),
+                    CreatePostActivity.GET_LOGO_FROM_APP
             )
         }
     }
@@ -142,6 +183,7 @@ class Template2Activity : AppCompatActivity(), OnAddImagesListener, OnTemplateCl
                         val byteArray = data.getByteArrayExtra("image")
                         val bitmap = BitmapFactory.decodeByteArray(byteArray, 0, byteArray!!.size)
                         Glide.with(this).load(bitmap).into(viewBinding.imgMain)
+
                     }
                 }
                 CreatePostActivity.GET_LOGO_FROM_APP -> {
@@ -152,7 +194,7 @@ class Template2Activity : AppCompatActivity(), OnAddImagesListener, OnTemplateCl
                         viewBinding.llSelector.visibility = View.VISIBLE
                         viewBinding.logo.visibility = View.VISIBLE
                         viewBinding.constraint.visibility = View.GONE
-                        viewBinding.tvLogo.text = resources.getString(R.string.edit_logo)
+                        if (bitmap != null) viewBinding.tvLogo.text = resources.getString(R.string.edit_logo)
                     }
                 }
                 CreatePostActivity.GET_FROM_GALLERY -> if (resultCode == Activity.RESULT_OK && data != null) {
@@ -161,8 +203,9 @@ class Template2Activity : AppCompatActivity(), OnAddImagesListener, OnTemplateCl
 
                     try {
                         bitmap =
-                            MediaStore.Images.Media.getBitmap(this.contentResolver, selectedImage)
+                                MediaStore.Images.Media.getBitmap(this.contentResolver, selectedImage)
                         viewBinding.imgMain.setImageBitmap(bitmap)
+
                     } catch (e: FileNotFoundException) {
                         e.printStackTrace()
                     } catch (e: IOException) {
@@ -174,12 +217,12 @@ class Template2Activity : AppCompatActivity(), OnAddImagesListener, OnTemplateCl
                     try {
 
                         logoBitmap =
-                            MediaStore.Images.Media.getBitmap(this.contentResolver, selectedImage)
+                                MediaStore.Images.Media.getBitmap(this.contentResolver, selectedImage)
                         viewBinding.llSelector.visibility = View.VISIBLE
                         viewBinding.logo.visibility = View.VISIBLE
                         viewBinding.constraint.visibility = View.GONE
                         viewBinding.logo.setImageBitmap(logoBitmap)
-                        viewBinding.tvLogo.text = resources.getString(R.string.edit_logo)
+                        if (logoBitmap != null) viewBinding.tvLogo.text = resources.getString(R.string.edit_logo)
 
                     } catch (e: FileNotFoundException) {
                         e.printStackTrace()
@@ -190,33 +233,66 @@ class Template2Activity : AppCompatActivity(), OnAddImagesListener, OnTemplateCl
             }
         }
     }
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.option_menu, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+    private fun menuItemSelected(it: MenuItem?) {
+        if (it?.itemId == R.id.action_save) {
+
+        }
+
+        if (it?.itemId == R.id.action_share) {
+            if (viewBinding.edtMain.text.isNullOrEmpty()) {
+                viewBinding.edtMain.visibility = View.GONE
+            }
+
+            if (viewBinding.edtWeb.text.isNullOrEmpty()) {
+                viewBinding.edtWeb.visibility = View.GONE
+            }
+            viewBinding.edtMain.isCursorVisible = false
+            val post: Bitmap? = viewToImage(viewBinding.fotoBox)
+
+            val uri = Uri.parse(
+                    MediaStore.Images.Media.insertImage(
+                            contentResolver,
+                            post,
+                            null,
+                            null
+                    )
+            )
+
+            val share = Intent(Intent.ACTION_SEND)
+            share.type = "image/*"
+            share.putExtra(Intent.EXTRA_STREAM, uri)
+
+            startActivity(Intent.createChooser(share, "Share Image"))
+            viewBinding.edtMain.visibility = View.VISIBLE
+            viewBinding.edtWeb.visibility = View.VISIBLE
+            viewBinding.edtMain.isCursorVisible = true
+
+        }
+
+    }
+
+    private fun checkLogoDrawable() {
+        if (viewBinding.logo.drawable == null)
+            viewBinding.tvLogo.text = resources.getString(R.string.add_logo)
+        else viewBinding.tvLogo.text = resources.getString(R.string.edit_logo)
+    }
 
     override fun editText() {
         viewBinding.llMain.visibility = View.GONE
         viewBinding.llTextEdit.visibility = View.VISIBLE
-        viewBinding.imgResize.visibility = View.GONE
-        viewBinding.textResize.visibility = View.VISIBLE
+        viewBinding.seekBarLayout.visibility = View.GONE
     }
 
-    override fun changeTextColor() {
-        ColorPickerDialog.Builder(this)
-            .setTitle("ColorPicker Dialog")
-            .setPreferenceName("MyColorPickerDialog")
-            .setPositiveButton("SELECT", object : ColorEnvelopeListener {
-                override fun onColorSelected(envelope: ColorEnvelope?, fromUser: Boolean) {
-                    if (viewBinding.edtMain.isFocused)
-                        viewBinding.edtMain.setTextColor(envelope!!.color)
-                    if (viewBinding.edtWeb.isFocused)
-                        viewBinding.edtWeb.setTextColor(envelope!!.color)
-                }
-            })
-            .setNegativeButton(
-                "CANCEL"
-            ) { dialog, _ -> dialog?.dismiss(); }
-            .attachAlphaSlideBar(true) // the default value is true.
-            .attachBrightnessSlideBar(true)  // the default value is true.
-            .setBottomSpace(12) // set a bottom space between the last slidebar and buttons.
-            .show();
+    override fun changeTextColor(lastSelectedColor: Int) {
+        if (viewBinding.edtMain.isFocused)
+            viewBinding.edtMain.setTextColor(lastSelectedColor)
+        if (viewBinding.edtWeb.isFocused)
+            viewBinding.edtWeb.setTextColor(lastSelectedColor)
+
     }
 
     override fun changeTextStyle() {
@@ -267,11 +343,13 @@ class Template2Activity : AppCompatActivity(), OnAddImagesListener, OnTemplateCl
             fontAdapter = FontAdapter(list!!, this, this)
             viewBinding.rv.adapter = fontAdapter
             viewBinding.rv.layoutManager =
-                LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+                    LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
         }
     }
 
+
     override fun doneTextEditing() {
+        viewBinding.seekBarLayout.visibility = View.GONE
         viewBinding.llMain.visibility = View.VISIBLE
         viewBinding.llTextEdit.visibility = View.GONE
         viewBinding.textResize.visibility = View.GONE
@@ -299,6 +377,41 @@ class Template2Activity : AppCompatActivity(), OnAddImagesListener, OnTemplateCl
     }
 
     override fun addTextShadow() {
+        viewBinding.seekBarLayout.visibility = View.VISIBLE
+        viewBinding.imgResize.visibility = View.GONE
+        viewBinding.textResize.visibility = View.GONE
+        viewBinding.textShadow.visibility = View.VISIBLE
+    }
+
+    override fun onSeekDone() {
+        viewBinding.seekBarLayout.visibility = View.GONE
+    }
+
+    override fun changeTextSize() {
+        viewBinding.seekBarLayout.visibility = View.VISIBLE
+        viewBinding.imgResize.visibility = View.GONE
+        viewBinding.textResize.visibility = View.VISIBLE
+        viewBinding.textShadow.visibility = View.GONE
+    }
+
+    override fun deleteAllItems() {
+        viewBinding.edtMain.setText("")
+        viewBinding.edtWeb.setText("")
+        viewBinding.logo.setImageDrawable(null)
+        viewBinding.imgMain.setImageDrawable(null)
+        checkLogoDrawable()
+
+    }
+
+    override fun closeWebEdit() {
+        TODO("Not yet implemented")
+    }
+
+    override fun closeQuoteEdit() {
+        TODO("Not yet implemented")
+    }
+
+    override fun editWebText() {
         TODO("Not yet implemented")
     }
 
@@ -323,18 +436,18 @@ class Template2Activity : AppCompatActivity(), OnAddImagesListener, OnTemplateCl
         constraintSet.clear(R.id.logo, ConstraintSet.BOTTOM)
         constraintSet.clear(R.id.logo, ConstraintSet.END)
         constraintSet.connect(
-            R.id.logo,
-            ConstraintSet.TOP,
-            ConstraintSet.PARENT_ID,
-            ConstraintSet.TOP,
-            resources.getDimensionPixelSize(R.dimen._10sdp)
+                R.id.logo,
+                ConstraintSet.TOP,
+                ConstraintSet.PARENT_ID,
+                ConstraintSet.TOP,
+                resources.getDimensionPixelSize(R.dimen._10sdp)
         )
         constraintSet.connect(
-            R.id.logo,
-            ConstraintSet.START,
-            ConstraintSet.PARENT_ID,
-            ConstraintSet.START,
-            resources.getDimensionPixelSize(R.dimen._10sdp)
+                R.id.logo,
+                ConstraintSet.START,
+                ConstraintSet.PARENT_ID,
+                ConstraintSet.START,
+                resources.getDimensionPixelSize(R.dimen._10sdp)
         )
         constraintSet.applyTo(viewBinding.constraint)
         viewBinding.llSelector.visibility = View.GONE
@@ -349,18 +462,18 @@ class Template2Activity : AppCompatActivity(), OnAddImagesListener, OnTemplateCl
         constraintSet.clear(R.id.logo, ConstraintSet.BOTTOM)
         constraintSet.clear(R.id.logo, ConstraintSet.START)
         constraintSet.connect(
-            R.id.logo,
-            ConstraintSet.TOP,
-            ConstraintSet.PARENT_ID,
-            ConstraintSet.TOP,
-            resources.getDimensionPixelSize(R.dimen._10sdp)
+                R.id.logo,
+                ConstraintSet.TOP,
+                ConstraintSet.PARENT_ID,
+                ConstraintSet.TOP,
+                resources.getDimensionPixelSize(R.dimen._10sdp)
         )
         constraintSet.connect(
-            R.id.logo,
-            ConstraintSet.END,
-            ConstraintSet.PARENT_ID,
-            ConstraintSet.END,
-            resources.getDimensionPixelSize(R.dimen._10sdp)
+                R.id.logo,
+                ConstraintSet.END,
+                ConstraintSet.PARENT_ID,
+                ConstraintSet.END,
+                resources.getDimensionPixelSize(R.dimen._10sdp)
         )
         constraintSet.applyTo(viewBinding.constraint)
         viewBinding.llSelector.visibility = View.GONE
@@ -375,18 +488,18 @@ class Template2Activity : AppCompatActivity(), OnAddImagesListener, OnTemplateCl
         constraintSet.clear(R.id.logo, ConstraintSet.TOP)
         constraintSet.clear(R.id.logo, ConstraintSet.END)
         constraintSet.connect(
-            R.id.logo,
-            ConstraintSet.BOTTOM,
-            ConstraintSet.PARENT_ID,
-            ConstraintSet.BOTTOM,
-            resources.getDimensionPixelSize(R.dimen._10sdp)
+                R.id.logo,
+                ConstraintSet.BOTTOM,
+                ConstraintSet.PARENT_ID,
+                ConstraintSet.BOTTOM,
+                resources.getDimensionPixelSize(R.dimen._10sdp)
         )
         constraintSet.connect(
-            R.id.logo,
-            ConstraintSet.START,
-            ConstraintSet.PARENT_ID,
-            ConstraintSet.START,
-            resources.getDimensionPixelSize(R.dimen._10sdp)
+                R.id.logo,
+                ConstraintSet.START,
+                ConstraintSet.PARENT_ID,
+                ConstraintSet.START,
+                resources.getDimensionPixelSize(R.dimen._10sdp)
         )
         constraintSet.applyTo(viewBinding.constraint)
         viewBinding.llSelector.visibility = View.GONE
@@ -401,18 +514,18 @@ class Template2Activity : AppCompatActivity(), OnAddImagesListener, OnTemplateCl
         constraintSet.clear(R.id.logo, ConstraintSet.TOP)
         constraintSet.clear(R.id.logo, ConstraintSet.START)
         constraintSet.connect(
-            R.id.logo,
-            ConstraintSet.BOTTOM,
-            ConstraintSet.PARENT_ID,
-            ConstraintSet.BOTTOM,
-            resources.getDimensionPixelSize(R.dimen._10sdp)
+                R.id.logo,
+                ConstraintSet.BOTTOM,
+                ConstraintSet.PARENT_ID,
+                ConstraintSet.BOTTOM,
+                resources.getDimensionPixelSize(R.dimen._10sdp)
         )
         constraintSet.connect(
-            R.id.logo,
-            ConstraintSet.END,
-            ConstraintSet.PARENT_ID,
-            ConstraintSet.END,
-            resources.getDimensionPixelSize(R.dimen._10sdp)
+                R.id.logo,
+                ConstraintSet.END,
+                ConstraintSet.PARENT_ID,
+                ConstraintSet.END,
+                resources.getDimensionPixelSize(R.dimen._10sdp)
         )
         constraintSet.applyTo(viewBinding.constraint)
         viewBinding.llSelector.visibility = View.GONE
@@ -422,6 +535,24 @@ class Template2Activity : AppCompatActivity(), OnAddImagesListener, OnTemplateCl
 
     override fun removeLogo() {
         viewBinding.logo.setImageBitmap(null)
+    }
+
+    override fun resizeLogo() {
+        viewBinding.seekBarLayout.visibility = View.VISIBLE
+        viewBinding.imgResize.visibility = View.VISIBLE
+        viewBinding.textResize.visibility = View.GONE
+        viewBinding.textShadow.visibility = View.GONE
+    }
+
+    private fun viewToImage(view: View): Bitmap? {
+
+        val returnedBitmap =
+                Bitmap.createBitmap(view.width, view.height, Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(returnedBitmap)
+        val bgDrawable = view.background
+        if (bgDrawable != null) bgDrawable.draw(canvas) else canvas.drawColor(Color.WHITE)
+        view.draw(canvas)
+        return returnedBitmap
     }
 
     override fun onSupportNavigateUp(): Boolean {

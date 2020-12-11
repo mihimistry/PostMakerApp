@@ -13,6 +13,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
+import com.google.android.gms.ads.AdRequest
 import com.google.firebase.auth.FirebaseAuth
 import com.maxgen.postmakerapp.R
 import com.maxgen.postmakerapp.activity.CreatePostActivity.Companion.GET_FROM_CAMERA
@@ -33,7 +34,11 @@ class ProfileActivity : AppCompatActivity(), OnImageClickListener {
         super.onCreate(savedInstanceState)
         viewBinding = ActivityProfileBinding.inflate(layoutInflater)
         setContentView(viewBinding.root)
+        setSupportActionBar(viewBinding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        val adRequest = AdRequest.Builder().build()
+        viewBinding.adView.loadAd(adRequest)
+
         viewModel = ViewModelProvider(this).get(UserViewModel::class.java)
         setupUI()
 
@@ -45,7 +50,7 @@ class ProfileActivity : AppCompatActivity(), OnImageClickListener {
     private fun setupUI() {
         viewModel?.imageListener = this
         userDetails =
-            viewModel?.getUserDetails(SharedPreferenceUser.getInstance().getUser(this).email)
+                viewModel?.getUserDetails(SharedPreferenceUser.getInstance().getUser(this).email)
 
         userDetails?.observe(this, Observer {
             SharedPreferenceUser.getInstance().loginUser(it, this)
@@ -54,6 +59,15 @@ class ProfileActivity : AppCompatActivity(), OnImageClickListener {
             Glide.with(this).load(it.imageUrl).into(viewBinding.profileImage)
         })
 
+        viewBinding.toolbar.setOnMenuItemClickListener {
+            if (it.itemId == R.id.action_logout) {
+                FirebaseAuth.getInstance().signOut()
+                SharedPreferenceUser.getInstance().logoutUser(this)
+                startActivity(Intent(this, LoginActivity::class.java))
+                finish()
+            }
+            return@setOnMenuItemClickListener false
+        }
     }
 
     override fun onSupportNavigateUp(): Boolean {
@@ -91,13 +105,14 @@ class ProfileActivity : AppCompatActivity(), OnImageClickListener {
                     viewBinding.profileImage.setImageBitmap(selectedImage)
                     uploadToStorage(data.data)
                 }
+
                 GET_FROM_GALLERY -> if (resultCode == Activity.RESULT_OK && data != null) {
                     val selectedImage = data.data
                     var bitmap: Bitmap? = null
                     try {
 
                         bitmap =
-                            MediaStore.Images.Media.getBitmap(this.contentResolver, selectedImage)
+                                MediaStore.Images.Media.getBitmap(this.contentResolver, selectedImage)
                         viewBinding.profileImage.setImageBitmap(bitmap)
                         uploadToStorage(data.data)
 
@@ -124,13 +139,4 @@ class ProfileActivity : AppCompatActivity(), OnImageClickListener {
         return super.onCreateOptionsMenu(menu)
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == R.id.action_logout) {
-            FirebaseAuth.getInstance().signOut()
-            SharedPreferenceUser.getInstance().logoutUser(this)
-            startActivity(Intent(this, LoginActivity::class.java))
-            finish()
-        }
-        return super.onOptionsItemSelected(item)
-    }
 }

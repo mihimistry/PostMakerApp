@@ -7,4 +7,5 @@ interface OnCornerSelectionListener {
     fun setLogoOnBSCorner()
     fun setLogoOnBECorner()
     fun removeLogo()
+    fun resizeLogo()
 }

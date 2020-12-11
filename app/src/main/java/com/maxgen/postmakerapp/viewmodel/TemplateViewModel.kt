@@ -5,6 +5,9 @@ import android.content.DialogInterface
 import android.view.View
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.ViewModel
+import com.flask.colorpicker.ColorPickerView
+import com.flask.colorpicker.builder.ColorPickerClickListener
+import com.flask.colorpicker.builder.ColorPickerDialogBuilder
 import com.maxgen.postmakerapp.R
 import com.maxgen.postmakerapp.adapter.OnAddImagesListener
 import com.maxgen.postmakerapp.adapter.OnCornerSelectionListener
@@ -64,29 +67,33 @@ class TemplateViewModel : ViewModel() {
 
     fun onEditLogoSelected(context: Context) {
         val options = arrayOf<CharSequence>(
-            "Change logo",
-            "Change logo Position",
-            "Remove logo",
-            "Cancel"
+                "Change logo",
+                "Change logo Position",
+                "Resize logo",
+                "Remove logo",
+                "Cancel"
         )
         AlertDialog.Builder(context)
-            .setTitle("Choose Action")
-            .setItems(options, DialogInterface.OnClickListener { dialog, which ->
-                when {
-                    options[which] == "Change logo" -> {
-                        onAddLogoSelected(context)
+                .setTitle("Choose Action")
+                .setItems(options, DialogInterface.OnClickListener { dialog, which ->
+                    when {
+                        options[which] == "Change logo" -> {
+                            onAddLogoSelected(context)
+                        }
+                        options[which] == "Change logo Position" -> {
+                            cornerSelectionListener?.changeLogoPosition()
+                        }
+                        options[which] == "Resize logo" -> {
+                            cornerSelectionListener?.resizeLogo()
+                        }
+                        options[which] == "Remove logo" -> {
+                            cornerSelectionListener?.removeLogo()
+                        }
+                        options[which] == "Cancel" -> {
+                            dialog.dismiss()
+                        }
                     }
-                    options[which] == "Change logo Position" -> {
-                        cornerSelectionListener?.changeLogoPosition()
-                    }
-                    options[which] == "Remove logo" -> {
-                        cornerSelectionListener?.removeLogo()
-                    }
-                    options[which] == "Cancel" -> {
-                        dialog.dismiss()
-                    }
-                }
-            }).show()
+                }).show()
     }
 
     fun onQuoteEditSelected(view: View) {
@@ -94,11 +101,31 @@ class TemplateViewModel : ViewModel() {
     }
 
     fun onChangeTextColorSelected(view: View) {
-        clickListeners?.changeTextColor()
+        ColorPickerDialogBuilder
+                .with(view.context)
+                .setTitle("Choose color")
+                .wheelType(ColorPickerView.WHEEL_TYPE.FLOWER)
+                .density(12)
+                .setOnColorSelectedListener {
+                    clickListeners?.changeTextColor(it)
+                }
+                .setPositiveButton("ok", ColorPickerClickListener { d, lastSelectedColor, allColors ->
+                    clickListeners?.changeTextColor(lastSelectedColor)
+
+                })
+                .setNegativeButton("cancel", DialogInterface.OnClickListener { dialog, which ->
+                    dialog.dismiss()
+                })
+                .build()
+                .show()
     }
 
     fun onChangeTextStyleSelected(view: View) {
         clickListeners?.changeTextStyle()
+    }
+
+    fun onChangeTextSizeSelected(view: View) {
+        clickListeners?.changeTextSize()
     }
 
     fun onChangeTextFontSelected(view: View) {
@@ -121,6 +148,10 @@ class TemplateViewModel : ViewModel() {
         clickListeners?.setDefaultFont()
     }
 
+    fun onSeekDoneSelected(view: View) {
+        clickListeners?.onSeekDone()
+    }
+
     fun onTSCornerSelected(view: View) {
         cornerSelectionListener?.setLogoOnTSCorner()
     }
@@ -137,7 +168,56 @@ class TemplateViewModel : ViewModel() {
         cornerSelectionListener?.setLogoOnBECorner()
     }
 
-    fun onBackPressed(view: View) {
-        clickListeners?.getPreviousActivity()
+    fun onWebEditClosed(view: View) {
+        clickListeners?.closeWebEdit()
     }
+
+    fun onQuoteEditClosed(view: View) {
+        clickListeners?.closeQuoteEdit()
+    }
+
+    fun onWebEditSelected(view: View) {
+        clickListeners?.editWebText()
+
+    }
+
+    fun onEdit1LogoSelected(context: Context) {
+        val options = arrayOf<CharSequence>(
+                "Change logo",
+                "Resize logo",
+                "Remove logo",
+                "Cancel"
+        )
+        AlertDialog.Builder(context)
+                .setTitle("Choose Action")
+                .setItems(options, DialogInterface.OnClickListener { dialog, which ->
+                    when {
+                        options[which] == "Change logo" -> {
+                            onAddLogoSelected(context)
+                        }
+                        options[which] == "Resize logo" -> {
+                            cornerSelectionListener?.resizeLogo()
+                        }
+                        options[which] == "Remove logo" -> {
+                            cornerSelectionListener?.removeLogo()
+                        }
+                        options[which] == "Cancel" -> {
+                            dialog.dismiss()
+                        }
+                    }
+                }).show()
+    }
+
+    fun onDeleteItemsSelected(view: View) {
+        val deleteDialog = AlertDialog.Builder(view.context)
+                .setTitle("Are You Sure?")
+                .setMessage("It will clear all edited items and will not be Restored")
+                .setPositiveButton("Yes, Clear", DialogInterface.OnClickListener { dialog, which ->
+                    clickListeners?.deleteAllItems()
+                }).setNegativeButton("No", DialogInterface.OnClickListener { dialog, which -> dialog.dismiss() })
+
+        deleteDialog.show()
+    }
+
+
 }

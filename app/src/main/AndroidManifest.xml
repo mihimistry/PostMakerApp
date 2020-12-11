@@ -11,53 +11,53 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.MaterialComponents.Light.DarkActionBar">
-        <activity
-            android:name=".activity.ExitActivity"
-            android:screenOrientation="portrait"></activity>
-        <activity
-            android:name=".activity.ProfileActivity"
-            android:label="Profile"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".activity.RegistrationActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".activity.LoginActivity"
-            android:screenOrientation="portrait">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+        android:theme="@style/AppTheme.NoActionBar">
+    <activity
+        android:name=".activity.ExitActivity"
+        android:screenOrientation="portrait"></activity>
+    <activity
+        android:name=".activity.ProfileActivity"
+        android:label="Profile"
+        android:screenOrientation="portrait" />
+    <activity
+        android:name=".activity.RegistrationActivity"
+        android:screenOrientation="portrait" />
+    <activity
+        android:name=".activity.LoginActivity"
+        android:screenOrientation="portrait">
+        <intent-filter>
+            <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-        <activity
-            android:name=".activity.TemplateListActivity"
-            android:label="Select Template"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".activity.ImageListActivity"
-            android:label="Choose Image"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".activity.Template2Activity"
-            android:label="Post Template"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".activity.Template1Activity"
-            android:label="Post Template"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".activity.SelectPostTypeActivity"></activity>
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent-filter>
+    </activity>
+    <activity
+        android:name=".activity.TemplateListActivity"
+        android:label="Select Template"
+        android:screenOrientation="portrait" />
+    <activity
+        android:name=".activity.ImageListActivity"
+        android:label="Choose Image"
+        android:screenOrientation="portrait" />
+    <activity
+        android:name=".activity.Template2Activity"
+        android:label="Post Template"
+        android:screenOrientation="portrait" />
+    <activity
+        android:name=".activity.Template1Activity"
+        android:label="Post Template"
+        android:screenOrientation="portrait"
+        android:theme="@style/AppTheme.NoActionBar" />
+    <activity android:name=".activity.SelectPostTypeActivity"></activity>
 
-        <activity
-            android:name=".activity.CreatePostActivity"
-            android:screenOrientation="portrait" />
-        <activity android:name=".activity.MainActivity" />
+    <activity
+        android:name=".activity.CreatePostActivity"
+        android:screenOrientation="portrait" />
+    <activity android:name=".activity.MainActivity" />
 
-        <meta-data
-            android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="ca-app-pub-3940256099942544~3347511713" />
-    </application>
+    <meta-data
+        android:name="com.google.android.gms.ads.APPLICATION_ID"
+        android:value="ca-app-pub-3940256099942544~3347511713" />
+</application>
 
-</manifest>
+    </manifest>

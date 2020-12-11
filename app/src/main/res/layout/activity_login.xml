@@ -35,6 +35,7 @@
                 app:startIconDrawable="@drawable/ic_email">
 
                 <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/edt_email"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="Email"
@@ -50,11 +51,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/_15sdp"
-                app:passwordToggleEnabled="true"
                 android:theme="@style/TextInput.Outlined"
+                app:passwordToggleEnabled="true"
                 app:startIconDrawable="@drawable/ic_pass">
 
                 <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/edt_pass"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="Password"
@@ -66,10 +68,9 @@
         </LinearLayout>
 
         <Button
-            android:id="@+id/button"
+            android:id="@+id/btn_login"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:onClick="@{viewModel::onLoginClicked}"
             android:text="Login"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -83,7 +84,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/button">
+            app:layout_constraintTop_toBottomOf="@+id/btn_login">
 
             <TextView
                 android:layout_width="wrap_content"

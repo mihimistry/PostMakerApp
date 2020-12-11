@@ -27,7 +27,7 @@
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
             app:adSize="BANNER"
-            app:adUnitId="ca-app-pub-3940256099942544/6300978111"
+            app:adUnitId="@string/ad_unit_id"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -47,17 +47,9 @@
                 android:gravity="center_vertical"
                 android:orientation="horizontal">
 
-                <ImageView
-                    android:layout_width="@dimen/_15sdp"
-                    android:layout_height="@dimen/_15sdp"
-                    android:background="?selectableItemBackgroundBorderless"
-                    android:onClick="@{viewModel::onBackPressed}"
-                    android:src="@drawable/ic_arrow_back" />
-
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/_24sdp"
                     android:text="Edit Template"
                     android:textColor="@android:color/black"
                     android:textSize="@dimen/_15sdp"
@@ -70,7 +62,7 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_margin="@dimen/_8sdp"
-            app:layout_constraintBottom_toTopOf="@+id/constraintLayout"
+            app:layout_constraintBottom_toTopOf="@+id/seekBar_layout"
             app:layout_constraintDimensionRatio="1:1"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -112,7 +104,7 @@
                         android:id="@+id/logo"
                         android:layout_width="@dimen/_40sdp"
                         android:layout_height="@dimen/_40sdp"
-                        android:layout_margin="@dimen/_10sdp"
+                        android:layout_margin="@dimen/_15sdp"
                         android:scaleType="fitCenter"
                         android:src="@drawable/ic_image"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -124,11 +116,12 @@
                         android:layout_width="wrap_content"
                         android:layout_height="0dp"
                         android:layout_marginHorizontal="@dimen/_20sdp"
-                        android:layout_marginBottom="@dimen/_25sdp"
+                        android:layout_marginBottom="@dimen/_15sdp"
                         android:background="@android:color/transparent"
                         android:gravity="bottom|center"
                         android:hint="YOUR QUOTE HERE"
                         android:inputType="textMultiLine|textNoSuggestions"
+                        android:padding="@dimen/_10sdp"
                         android:textSize="@dimen/_18sdp"
                         android:textStyle="bold"
                         app:layout_constraintBottom_toTopOf="@+id/edt_web"
@@ -141,28 +134,29 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="@dimen/_20sdp"
-                        android:layout_marginVertical="@dimen/_15sdp"
+                        android:layout_marginVertical="@dimen/_5sdp"
                         android:background="@android:color/transparent"
                         android:gravity="center"
                         android:hint="YOUR WEBSITE NAME | CONTACT"
                         android:inputType="textMultiLine|textNoSuggestions"
+                        android:padding="@dimen/_10sdp"
                         android:textSize="@dimen/_10sdp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
-
             </FrameLayout>
+
         </com.google.android.material.card.MaterialCardView>
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/constraintLayout"
+            android:id="@+id/seekBar_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/_8sdp"
+            android:layout_marginHorizontal="@dimen/_10sdp"
             android:layout_marginBottom="@dimen/_10sdp"
-            app:layout_constraintBottom_toBottomOf="@id/cv_post"
+            android:visibility="gone"
             app:layout_constraintBottom_toTopOf="@id/linearLayout"
             tools:layout_editor_absoluteX="10dp">
 
@@ -199,18 +193,19 @@
                 android:id="@+id/tv_per"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="0%"
                 android:layout_marginStart="@dimen/_25sdp"
+                android:text="0%"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
+
             <SeekBar
                 android:id="@+id/seekBar"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/_8sdp"
-                app:layout_constraintEnd_toStartOf="@id/seek_done"
                 app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/seek_done"
                 app:layout_constraintStart_toEndOf="@id/tv_per"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -218,11 +213,12 @@
                 android:id="@+id/seek_done"
                 android:layout_width="@dimen/_24sdp"
                 android:layout_height="@dimen/_24sdp"
+                android:onClick="@{viewModel::onSeekDoneSelected}"
                 android:src="@drawable/ic_done"
-                app:layout_constraintStart_toEndOf="@id/seekBar"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"/>
+                app:layout_constraintStart_toEndOf="@id/seekBar"
+                app:layout_constraintTop_toTopOf="parent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -238,7 +234,6 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent">
 
-
             <HorizontalScrollView
                 android:id="@+id/ll_main"
                 android:layout_width="match_parent"
@@ -250,13 +245,14 @@
                     android:orientation="horizontal">
 
                     <LinearLayout
+                        android:id="@+id/ll_delete"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:onClick="@{viewModel::onDeleteItemsSelected}"
                         android:layout_marginHorizontal="5dp"
                         android:orientation="vertical">
 
                         <ImageView
-                            android:id="@+id/delete_item"
                             android:layout_width="@dimen/_42sdp"
                             android:layout_height="@dimen/_42sdp"
                             android:padding="@dimen/_8sdp"
@@ -365,7 +361,6 @@
 
                     </LinearLayout>
 
-
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -422,6 +417,30 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Color"
+                            android:textSize="12dp" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/ll_text_resize"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="5dp"
+                        android:gravity="center"
+                        android:onClick="@{viewModel::onChangeTextSizeSelected}"
+                        android:orientation="vertical">
+
+                        <ImageView
+                            android:id="@+id/img_text_resize"
+                            android:layout_width="50dp"
+                            android:layout_height="50dp"
+                            android:padding="10dp"
+                            android:src="@drawable/ic_text_resize" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Size"
                             android:textSize="12dp" />
 
                     </LinearLayout>
@@ -581,7 +600,6 @@
                 android:layout_height="wrap_content"
                 android:visibility="gone" />
         </LinearLayout>
-
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

@@ -35,4 +35,8 @@ class AuthViewModel : ViewModel() {
     fun onGoToRegistrationClicked(view: View) {
         loginListener?.goToRegistration()
     }
+
+    fun userLogin(email: String, pass: String): LiveData<UserModel> {
+        return AuthRepository().loginUser(email,pass)
+    }
 }
