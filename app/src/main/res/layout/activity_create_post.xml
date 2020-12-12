@@ -104,7 +104,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="bottom|center"
                     android:layout_marginBottom="70dp"
-                    android:visibility="gone">
+                    android:visibility="visible">
 
                     <ImageView
                         android:id="@+id/imgTextClose"
@@ -130,10 +130,10 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="bottom|center"
                         android:layout_margin="20dp"
-                        android:gravity="center"
-                        android:padding="@dimen/_10sdp"
                         android:background="@android:color/transparent"
+                        android:gravity="center"
                         android:hint="ENTER YOUR TEXT"
+                        android:padding="@dimen/_10sdp"
                         android:textSize="20dp"
                         android:textStyle="bold" />
                 </FrameLayout>
@@ -143,7 +143,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="bottom|center"
-                    android:visibility="gone">
+                    android:visibility="visible">
 
                     <ImageView
                         android:id="@+id/imgWebClose"
@@ -169,10 +169,10 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="bottom|center"
                         android:layout_margin="20dp"
-                        android:gravity="center"
-                        android:padding="@dimen/_5sdp"
                         android:background="@android:color/transparent"
+                        android:gravity="center"
                         android:hint="ENTER YOUR WEBSITE"
+                        android:padding="@dimen/_5sdp"
                         android:textSize="12dp" />
                 </FrameLayout>
             </FrameLayout>
@@ -315,29 +315,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:gravity="center"
-                            android:text="Add Background\nImage"
-                            android:textSize="12dp" />
-
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginHorizontal="5dp"
-                        android:gravity="center"
-                        android:orientation="vertical">
-
-                        <ImageView
-                            android:id="@+id/add_text"
-                            android:layout_width="50dp"
-                            android:layout_height="50dp"
-                            android:padding="10dp"
-                            android:src="@drawable/ic_text_fields" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Add Text"
+                            android:text="Background"
                             android:textSize="12dp" />
 
                     </LinearLayout>
@@ -365,27 +343,7 @@
 
                     </LinearLayout>
 
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginHorizontal="5dp"
-                        android:gravity="center"
-                        android:orientation="vertical">
 
-                        <ImageView
-                            android:id="@+id/add_website"
-                            android:layout_width="50dp"
-                            android:layout_height="50dp"
-                            android:padding="10dp"
-                            android:src="@drawable/ic_world_wide_web" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Add Website"
-                            android:textSize="12dp" />
-
-                    </LinearLayout>
                 </LinearLayout>
             </HorizontalScrollView>
 

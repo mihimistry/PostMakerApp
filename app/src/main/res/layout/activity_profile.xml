@@ -15,9 +15,10 @@
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:background="@color/light_grey"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        >
+
         <com.google.android.gms.ads.AdView
             android:id="@+id/adView"
             android:layout_width="match_parent"
@@ -25,7 +26,7 @@
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
             app:adSize="BANNER"
-            app:adUnitId="ca-app-pub-3940256099942544/6300978111"
+            app:adUnitId="@string/ad_unit_id"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -54,16 +55,18 @@
                     android:textStyle="bold" />
             </LinearLayout>
         </com.google.android.material.appbar.MaterialToolbar>
+
         <TextView
             android:id="@+id/textView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/_5sdp"
-            android:layout_marginVertical="@dimen/_25sdp"
+            android:layout_marginHorizontal="@dimen/_10sdp"
+            android:layout_marginVertical="@dimen/_20sdp"
             android:gravity="center"
             android:text="@{user.userName}"
             android:textSize="@dimen/_20sdp"
             android:textStyle="bold"
+            android:textColor="@android:color/black"
             app:layout_constraintBottom_toTopOf="@id/frame"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -90,49 +93,92 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_marginTop="@dimen/_40sdp"
+
                     android:orientation="vertical"
+                    android:padding="@dimen/_10sdp"
                     tools:context=".activity.ProfileActivity">
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_margin="@dimen/_5sdp"
-                        android:gravity="center"
+                        android:gravity="center_vertical"
+                        android:drawableStart="@drawable/ic_email"
+                        android:drawableTint="@color/colorPrimary"
+                        android:drawablePadding="@dimen/_5sdp"
+                        android:text="Email" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/_5sdp"
+                        android:gravity="start|center_vertical"
+                        android:textColor="@android:color/black"
                         android:text="@{user.email}"
-                        android:textSize="@dimen/_15sdp" />
+                        android:textSize="@dimen/_12sdp" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/_1sdp"
+                        android:layout_marginVertical="@dimen/_10sdp"
+                        android:background="@color/light_grey" />
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_margin="@dimen/_5sdp"
-                        android:gravity="center"
+                        android:gravity="center_vertical"
+                        android:drawableTint="@color/colorPrimary"
+                        android:drawableStart="@drawable/ic_phone"
+                        android:drawablePadding="@dimen/_5sdp"
+                        android:text="Contact" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/_5sdp"
+                        android:gravity="start|center_vertical"
+                        android:textColor="@android:color/black"
                         android:text="@{user.phone}"
-                        android:textSize="@dimen/_15sdp" />
+                        android:textSize="@dimen/_12sdp" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/_1sdp"
+                        android:layout_marginVertical="@dimen/_10sdp"
+                        android:background="@color/light_grey" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:gravity="center_vertical"
+                        android:layout_height="wrap_content"
+                        android:drawableStart="@drawable/ic_web"
+                        android:drawableTint="@color/colorPrimary"
+                        android:drawablePadding="@dimen/_5sdp"
+                        android:text="Website" />
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_margin="@dimen/_5sdp"
-                        android:gravity="center"
+                        android:layout_marginTop="@dimen/_5sdp"
+                        android:gravity="start|center_vertical"
+                        android:textColor="@android:color/black"
                         android:text="@{user.website}"
-                        android:textSize="@dimen/_15sdp" />
+                        android:textSize="@dimen/_12sdp" />
 
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
             <ImageView
-                android:padding="@dimen/_5sdp"
                 android:id="@+id/profile_image"
-                android:background="@android:color/white"
                 android:layout_width="@dimen/_74sdp"
                 android:layout_height="@dimen/_74sdp"
-                android:layout_marginTop="@dimen/_10sdp"
                 android:layout_gravity="center_horizontal"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:background="@android:color/white"
                 android:clickable="true"
                 android:elevation="@dimen/_6sdp"
                 android:focusable="true"
-                android:scaleType="fitCenter"
-                />
+                android:padding="@dimen/_5sdp"
+                android:scaleType="fitCenter" />
         </FrameLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 

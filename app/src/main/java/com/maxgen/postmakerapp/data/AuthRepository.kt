@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.maxgen.postmakerapp.model.UserModel
+import com.maxgen.postmakerapp.model.UserModel.UserEnum
 
 class AuthRepository {
 
@@ -45,6 +46,30 @@ class AuthRepository {
                 } else Log.e(TAG, "loginUser: ", it.exception)
             }
         return loginResponse
+    }
+
+    fun updateUserProfile(
+        userName: String,
+        email: String,
+        phone: String,
+        website: String
+    ): LiveData<String> {
+        val updateResponse = MutableLiveData<String>()
+        val map = HashMap<String, Any>()
+        map[UserEnum.userName.name] = userName
+        map[UserEnum.phone.name] = phone
+        map[UserEnum.website.name] = website
+
+        FirebaseFirestore.getInstance().collection(UserEnum.USER.name).document(email)
+            .update(map).addOnCompleteListener {
+                if (it.isSuccessful)
+                    updateResponse.value = "Updated Successfully"
+                else {
+                    Log.e(TAG, "updateUserProfile: ", it.exception)
+                    updateResponse.value = "failed"
+                }
+            }
+        return updateResponse
     }
 
     companion object {

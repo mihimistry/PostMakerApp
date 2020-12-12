@@ -37,6 +37,15 @@ class AuthViewModel : ViewModel() {
     }
 
     fun userLogin(email: String, pass: String): LiveData<UserModel> {
-        return AuthRepository().loginUser(email,pass)
+        return AuthRepository().loginUser(email, pass)
+    }
+
+    fun updateUserProfile(
+        userName: String,
+        email: String,
+        phone: String,
+        website: String
+    ): LiveData<String> {
+        return AuthRepository().updateUserProfile(userName, email, phone, website)
     }
 }

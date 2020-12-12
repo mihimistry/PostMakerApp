@@ -41,7 +41,8 @@ import java.io.FileOutputStream
 import java.io.IOException
 import java.net.URL
 
-class CreatePostActivity : AppCompatActivity(), OnFontChangeListener, OnTemplateClickListeners, OnAddImagesListener {
+class CreatePostActivity : AppCompatActivity(), OnFontChangeListener, OnTemplateClickListeners,
+    OnAddImagesListener {
 
     private lateinit var viewBinding: ActivityCreatePostBinding
 
@@ -81,6 +82,10 @@ class CreatePostActivity : AppCompatActivity(), OnFontChangeListener, OnTemplate
     }
 
     private fun setupUI() {
+
+        viewBinding.webLayout.setOnTouchListener(MultiTouchListener())
+        viewBinding.edtLayout.setOnTouchListener(MultiTouchListener())
+
         if (viewBinding.imgLogo.drawable == null)
             viewBinding.tvLogo.text = resources.getString(R.string.add_logo)
         else viewBinding.tvLogo.text = resources.getString(R.string.edit_logo)
@@ -136,20 +141,20 @@ class CreatePostActivity : AppCompatActivity(), OnFontChangeListener, OnTemplate
 
                         if (edt_main.isFocused) {
                             viewBinding.edtMain
-                                    .setShadowLayer(
-                                            (progress / 10).toFloat(),
-                                            (progress / 10).toFloat(),
-                                            (progress / 10).toFloat(),
-                                            Color.BLACK
-                                    );
-                            edt_main.requestLayout()
-                        }
-                        if (edt_web.isFocused) {
-                            viewBinding.edtWeb.setShadowLayer(
+                                .setShadowLayer(
                                     (progress / 10).toFloat(),
                                     (progress / 10).toFloat(),
                                     (progress / 10).toFloat(),
                                     Color.BLACK
+                                );
+                            edt_main.requestLayout()
+                        }
+                        if (edt_web.isFocused) {
+                            viewBinding.edtWeb.setShadowLayer(
+                                (progress / 10).toFloat(),
+                                (progress / 10).toFloat(),
+                                (progress / 10).toFloat(),
+                                Color.BLACK
                             );
                             edt_web.requestLayout()
                         }
@@ -167,17 +172,7 @@ class CreatePostActivity : AppCompatActivity(), OnFontChangeListener, OnTemplate
             viewBinding.edtMain.setText("")
         }
 
-        viewBinding.addWebsite.setOnClickListener {
-            viewBinding.webLayout.visibility = View.VISIBLE
-            viewBinding.webLayout.setOnTouchListener(MultiTouchListener())
 
-        }
-
-        viewBinding.addText.setOnClickListener {
-            viewBinding.edtLayout.visibility = View.VISIBLE
-            viewBinding.edtLayout.setOnTouchListener(MultiTouchListener())
-
-        }
     }
 
     private fun loadImage(user: UserModel) {
@@ -210,12 +205,12 @@ class CreatePostActivity : AppCompatActivity(), OnFontChangeListener, OnTemplate
             val post: Bitmap? = viewToImage(viewBinding.fotoBox)
 
             val uri = Uri.parse(
-                    MediaStore.Images.Media.insertImage(
-                            contentResolver,
-                            post,
-                            null,
-                            null
-                    )
+                MediaStore.Images.Media.insertImage(
+                    contentResolver,
+                    post!!,
+                    null,
+                    null
+                )
             )
 
             val share = Intent(Intent.ACTION_SEND)
@@ -228,23 +223,35 @@ class CreatePostActivity : AppCompatActivity(), OnFontChangeListener, OnTemplate
 
     }
 
-    private fun setLogo(bitmap: Bitmap?) {
-        viewBinding.imgLogo.addSticker(bitmap)
-    }
+    private fun setLogo(bitmap: Bitmap?) = viewBinding.imgLogo.addSticker(bitmap)
+
 
     private fun setImage(bitmap: Bitmap?) {
-
         viewBinding.imgMain.setImageBitmap(bitmap)
-
         viewBinding.imgMain.setOnTouchListener(MultiTouchListener())
-
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode != Activity.RESULT_CANCELED) {
             when (requestCode) {
-
+                GET_FROM_APP -> {
+                    if (resultCode == Activity.RESULT_OK && data != null) {
+                        val byteArray = data.getByteArrayExtra("image")
+                        val bitmap = BitmapFactory.decodeByteArray(byteArray, 0, byteArray!!.size)
+                        if (bitmap != null) setImage(bitmap)
+                    }
+                }
+                GET_LOGO_FROM_APP -> {
+                    if (resultCode == Activity.RESULT_OK && data != null) {
+                        val byteArray = data.getByteArrayExtra("image")
+                        val bitmap = BitmapFactory.decodeByteArray(byteArray, 0, byteArray!!.size)
+                        if (bitmap != null) {
+                            setLogo(bitmap)
+                            viewBinding.tvLogo.text = resources.getString(R.string.edit_logo)
+                        }
+                    }
+                }
                 GET_FROM_GALLERY -> if (resultCode == Activity.RESULT_OK && data != null) {
                     val imageUri = data.data
                     var bitmap: Bitmap? = null
@@ -280,7 +287,7 @@ class CreatePostActivity : AppCompatActivity(), OnFontChangeListener, OnTemplate
     private fun viewToImage(view: View): Bitmap? {
 
         val returnedBitmap =
-                Bitmap.createBitmap(view.width, view.height, Bitmap.Config.ARGB_8888)
+            Bitmap.createBitmap(view.width, view.height, Bitmap.Config.ARGB_8888)
         val canvas = Canvas(returnedBitmap)
         val bgDrawable = view.background
         if (bgDrawable != null) bgDrawable.draw(canvas) else canvas.drawColor(Color.WHITE)
@@ -316,10 +323,10 @@ class CreatePostActivity : AppCompatActivity(), OnFontChangeListener, OnTemplate
             e.printStackTrace()
         }
         MediaScannerConnection.scanFile(
-                this,
-                arrayOf<String>(file.toString()),
-                arrayOf<String>(file.getName()),
-                null
+            this,
+            arrayOf<String>(file.toString()),
+            arrayOf<String>(file.getName()),
+            null
         )
     }
 
@@ -433,7 +440,7 @@ class CreatePostActivity : AppCompatActivity(), OnFontChangeListener, OnTemplate
             fontAdapter = FontAdapter(list!!, this, this)
             viewBinding.rv.adapter = fontAdapter
             viewBinding.rv.layoutManager =
-                    LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+                LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
         }
 
     }
@@ -557,14 +564,14 @@ class CreatePostActivity : AppCompatActivity(), OnFontChangeListener, OnTemplate
             intent.type = "image/*"
             intent.action = Intent.ACTION_GET_CONTENT
             startActivityForResult(
-                    Intent.createChooser(intent, "Select Picture"),
-                    CreatePostActivity.GET_FROM_GALLERY
+                Intent.createChooser(intent, "Select Picture"),
+                CreatePostActivity.GET_FROM_GALLERY
             )
         }
         if (s == resources.getString(R.string.from_app)) {
             startActivityForResult(
-                    Intent(this, ImageListActivity::class.java),
-                    CreatePostActivity.GET_FROM_APP
+                Intent(this, ImageListActivity::class.java),
+                CreatePostActivity.GET_FROM_APP
             )
         }
     }
@@ -575,14 +582,14 @@ class CreatePostActivity : AppCompatActivity(), OnFontChangeListener, OnTemplate
             intent.type = "image/*"
             intent.action = Intent.ACTION_GET_CONTENT
             startActivityForResult(
-                    Intent.createChooser(intent, "Select Picture"),
-                    CreatePostActivity.GET_LOGO_FROM_GALLERY
+                Intent.createChooser(intent, "Select Picture"),
+                CreatePostActivity.GET_LOGO_FROM_GALLERY
             )
         }
         if (from == resources.getString(R.string.from_app)) {
             startActivityForResult(
-                    Intent(this, ImageListActivity::class.java),
-                    CreatePostActivity.GET_LOGO_FROM_APP
+                Intent(this, ImageListActivity::class.java),
+                CreatePostActivity.GET_LOGO_FROM_APP
             )
         }
     }

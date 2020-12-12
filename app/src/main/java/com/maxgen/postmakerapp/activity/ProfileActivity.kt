@@ -7,7 +7,6 @@ import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.view.Menu
-import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
@@ -50,7 +49,7 @@ class ProfileActivity : AppCompatActivity(), OnImageClickListener {
     private fun setupUI() {
         viewModel?.imageListener = this
         userDetails =
-                viewModel?.getUserDetails(SharedPreferenceUser.getInstance().getUser(this).email)
+            viewModel?.getUserDetails(SharedPreferenceUser.getInstance().getUser(this).email)
 
         userDetails?.observe(this, Observer {
             SharedPreferenceUser.getInstance().loginUser(it, this)
@@ -60,6 +59,9 @@ class ProfileActivity : AppCompatActivity(), OnImageClickListener {
         })
 
         viewBinding.toolbar.setOnMenuItemClickListener {
+            if (it.itemId == R.id.action_edit) {
+                startActivity(Intent(this, UpdateProfileActivity::class.java))
+            }
             if (it.itemId == R.id.action_logout) {
                 FirebaseAuth.getInstance().signOut()
                 SharedPreferenceUser.getInstance().logoutUser(this)
@@ -112,7 +114,7 @@ class ProfileActivity : AppCompatActivity(), OnImageClickListener {
                     try {
 
                         bitmap =
-                                MediaStore.Images.Media.getBitmap(this.contentResolver, selectedImage)
+                            MediaStore.Images.Media.getBitmap(this.contentResolver, selectedImage)
                         viewBinding.profileImage.setImageBitmap(bitmap)
                         uploadToStorage(data.data)
 
