@@ -43,7 +43,10 @@ class AuthRepository {
                                 Log.e(TAG, "loginUser: ", error)
                             }
                         }
-                } else Log.e(TAG, "loginUser: ", it.exception)
+                } else {
+                    loginResponse.value = null
+                    Log.e(TAG, "loginUser: ", it.exception)
+                }
             }
         return loginResponse
     }

@@ -17,6 +17,7 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.SeekBar
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.FileProvider
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.gms.ads.AdRequest
@@ -171,18 +172,17 @@ class CreatePostActivity : AppCompatActivity(), OnFontChangeListener, OnTemplate
         viewBinding.imgTextClose.setOnClickListener {
             viewBinding.edtMain.setText("")
         }
-
-
     }
 
-    private fun loadImage(user: UserModel) {
-        val url = URL(user.imageUrl)
-        val image: Bitmap = BitmapFactory.decodeStream(url.openConnection().getInputStream())
-        viewBinding.imgLogo.addSticker(image)
+    private suspend fun loadImage(user: UserModel) {
+        if (user.imageUrl.isNotEmpty()) {
+            val url = URL(user.imageUrl)
+            val image: Bitmap = BitmapFactory.decodeStream(url.openConnection().getInputStream())
+            viewBinding.imgLogo.addSticker(image)
+        }
     }
 
     private fun menuItemSelected(it: MenuItem?) {
-
         if (it?.itemId == R.id.action_save) {
             viewBinding.edtMain.isCursorVisible = false
             val post: Bitmap? = viewToImage(viewBinding.fotoBox)
@@ -195,7 +195,6 @@ class CreatePostActivity : AppCompatActivity(), OnFontChangeListener, OnTemplate
             if (viewBinding.edtMain.text.isNullOrEmpty()) {
                 viewBinding.edtMain.visibility = View.GONE
             }
-
             if (viewBinding.edtWeb.text.isNullOrEmpty()) {
                 viewBinding.edtWeb.visibility = View.GONE
             }
@@ -204,23 +203,60 @@ class CreatePostActivity : AppCompatActivity(), OnFontChangeListener, OnTemplate
             viewBinding.edtMain.isCursorVisible = false
             val post: Bitmap? = viewToImage(viewBinding.fotoBox)
 
-            val uri = Uri.parse(
-                MediaStore.Images.Media.insertImage(
-                    contentResolver,
-                    post!!,
-                    null,
-                    null
-                )
-            )
-
-            val share = Intent(Intent.ACTION_SEND)
-            share.type = "image/*"
-            share.putExtra(Intent.EXTRA_STREAM, uri)
-
-            startActivity(Intent.createChooser(share, "Share Image"))
+            saveImageToInternalStorage(post)
+//
+//            val uri = Uri.parse(
+//                MediaStore.Images.Media.insertImage(
+//                    contentResolver,
+//                    post!!,
+//                    null,
+//                    null
+//                )
+//            )
+//
+//            val share = Intent(Intent.ACTION_SEND)
+//            share.type = "image/*"
+//            share.putExtra(Intent.EXTRA_STREAM, uri)
+//
+//            startActivity(Intent.createChooser(share, "Share Image"))
 
         }
 
+    }
+
+    private fun saveImageToInternalStorage(post: Bitmap?) {
+        try {
+            val cachePath = File(cacheDir, "images")
+            cachePath.mkdirs() // don't forget to make the directory
+            val stream =
+                FileOutputStream("$cachePath/image.png") // overwrites this image every time
+            post?.compress(Bitmap.CompressFormat.PNG, 100, stream)
+            stream.close()
+            shareImage()
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+    }
+
+    private fun shareImage() {
+
+        val imagePath: File = File(cacheDir, "images")
+        val newFile = File(imagePath, "image.png")
+        val contentUri: Uri =
+            FileProvider.getUriForFile(this, "com.maxgen.postmakerapp.fileprovider", newFile)
+
+        val shareIntent = Intent()
+        shareIntent.action = Intent.ACTION_SEND
+
+        shareIntent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION or Intent.FLAG_GRANT_READ_URI_PERMISSION) // temp permission for receiving app to read this file
+        shareIntent.setDataAndType(contentUri, contentResolver.getType(contentUri))
+        shareIntent.type = "image/*"
+        shareIntent.putExtra(Intent.EXTRA_STREAM, contentUri)
+        startActivity(Intent.createChooser(shareIntent, "Choose an app"))
+
+        viewBinding.edtMain.visibility = View.VISIBLE
+        viewBinding.edtWeb.visibility = View.VISIBLE
+        viewBinding.edtMain.isCursorVisible = true
     }
 
     private fun setLogo(bitmap: Bitmap?) = viewBinding.imgLogo.addSticker(bitmap)

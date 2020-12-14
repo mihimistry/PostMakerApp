@@ -12,6 +12,7 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.SeekBar
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.FileProvider
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
@@ -27,11 +28,13 @@ import com.maxgen.postmakerapp.model.AssetModel
 import com.maxgen.postmakerapp.utils.SharedPreferenceUser
 import com.maxgen.postmakerapp.viewmodel.TemplateViewModel
 import kotlinx.android.synthetic.main.activity_template1.*
+import java.io.File
 import java.io.FileNotFoundException
+import java.io.FileOutputStream
 import java.io.IOException
 
 class Template1Activity : AppCompatActivity(), OnAddImagesListener, OnTemplateClickListeners,
-        OnCornerSelectionListener, OnFontChangeListener {
+    OnCornerSelectionListener, OnFontChangeListener {
     private lateinit var viewBinding: ActivityTemplate1Binding
     private var list: ArrayList<AssetModel>? = null
     private var fontAdapter: FontAdapter? = null
@@ -115,21 +118,21 @@ class Template1Activity : AppCompatActivity(), OnAddImagesListener, OnTemplateCl
                     if (viewBinding.textShadow.visibility == View.VISIBLE) {
                         if (edt_main.isFocused) {
                             viewBinding.edtMain
-                                    .setShadowLayer(
-                                            (progress / 10).toFloat(),
-                                            (progress / 10).toFloat(),
-                                            (progress / 10).toFloat(),
-                                            Color.BLACK
-                                    )
+                                .setShadowLayer(
+                                    (progress / 10).toFloat(),
+                                    (progress / 10).toFloat(),
+                                    (progress / 10).toFloat(),
+                                    Color.BLACK
+                                )
                             edt_main.requestLayout()
                         }
 
                         if (edt_web.isFocused) {
                             viewBinding.edtWeb.setShadowLayer(
-                                    (progress / 10).toFloat(),
-                                    (progress / 10).toFloat(),
-                                    (progress / 10).toFloat(),
-                                    Color.BLACK
+                                (progress / 10).toFloat(),
+                                (progress / 10).toFloat(),
+                                (progress / 10).toFloat(),
+                                Color.BLACK
                             )
                             edt_web.requestLayout()
                         }
@@ -160,26 +163,77 @@ class Template1Activity : AppCompatActivity(), OnAddImagesListener, OnTemplateCl
             viewBinding.edtMain.isCursorVisible = false
             val post: Bitmap? = viewToImage(viewBinding.fotoBox)
 
-            val uri = Uri.parse(
-                    MediaStore.Images.Media.insertImage(
-                            contentResolver,
-                            post,
-                            null,
-                            null
-                    )
-            )
+            saveImageToInternalStorage(post)
+//
+//            val relativeLocation = Environment.DIRECTORY_PICTURES + File.pathSeparator + "PostMaker"
+//
+//            val contentValues = ContentValues().apply {
+//                put(MediaStore.MediaColumns.DISPLAY_NAME, System.currentTimeMillis().toString())
+//                put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg")
+//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) { //this one
+//                    put(MediaStore.MediaColumns.RELATIVE_PATH, relativeLocation)
+//                    put(MediaStore.MediaColumns.IS_PENDING, 1)
+//                }
+//            }
+//            val uri =
+//                contentResolver.insert(MediaStore.Images.Media.INTERNAL_CONTENT_URI, contentValues)
+//
+//            val Auri = Uri.parse(
+//                MediaStore.Images.Media.insertImage(
+//                    contentResolver,
+//                    post,
+//                    null,
+//                    null
+//                )
+//            )
+//
+//            val share = Intent(Intent.ACTION_SEND)
+//            share.type = "image/*"
+//            share.putExtra(Intent.EXTRA_STREAM, uri)
+//
+//            startActivity(Intent.createChooser(share, "Share Image"))
 
-            val share = Intent(Intent.ACTION_SEND)
-            share.type = "image/*"
-            share.putExtra(Intent.EXTRA_STREAM, uri)
-
-            startActivity(Intent.createChooser(share, "Share Image"))
             viewBinding.edtMain.visibility = View.VISIBLE
             viewBinding.edtWeb.visibility = View.VISIBLE
             viewBinding.edtMain.isCursorVisible = true
 
         }
 
+    }
+
+    private fun saveImageToInternalStorage(post: Bitmap?) {
+        try {
+            val cachePath = File(cacheDir, "images")
+            cachePath.mkdirs() // don't forget to make the directory
+            val stream =
+                FileOutputStream("$cachePath/image.png") // overwrites this image every time
+            post?.compress(Bitmap.CompressFormat.PNG, 100, stream)
+            stream.close()
+            shareImage()
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+    }
+
+    private fun shareImage() {
+
+        val imagePath: File = File(cacheDir, "images")
+        val newFile = File(imagePath, "image.png")
+        val contentUri: Uri =
+            FileProvider.getUriForFile(this, "com.maxgen.postmakerapp.fileprovider", newFile)
+
+        val shareIntent = Intent()
+        shareIntent.action = Intent.ACTION_SEND
+
+        shareIntent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION or Intent.FLAG_GRANT_READ_URI_PERMISSION) // temp permission for receiving app to read this file
+        shareIntent.setDataAndType(contentUri, contentResolver.getType(contentUri))
+        shareIntent.type = "image/*"
+        shareIntent.putExtra(Intent.EXTRA_STREAM, contentUri)
+        startActivity(Intent.createChooser(shareIntent, "Choose an app"))
+
+        viewBinding.edtMain.visibility = View.VISIBLE
+        viewBinding.edtWeb.visibility = View.VISIBLE
+        viewBinding.edtMain.isCursorVisible = true
     }
 
     private fun checkLogoDrawable() {
@@ -194,14 +248,14 @@ class Template1Activity : AppCompatActivity(), OnAddImagesListener, OnTemplateCl
             intent.type = "image/*"
             intent.action = Intent.ACTION_GET_CONTENT
             startActivityForResult(
-                    Intent.createChooser(intent, "Select Picture"),
-                    GET_FROM_GALLERY
+                Intent.createChooser(intent, "Select Picture"),
+                GET_FROM_GALLERY
             )
         }
         if (s == resources.getString(R.string.from_app)) {
             startActivityForResult(
-                    Intent(this, ImageListActivity::class.java),
-                    GET_FROM_APP
+                Intent(this, ImageListActivity::class.java),
+                GET_FROM_APP
             )
         }
     }
@@ -212,14 +266,14 @@ class Template1Activity : AppCompatActivity(), OnAddImagesListener, OnTemplateCl
             intent.type = "image/*"
             intent.action = Intent.ACTION_GET_CONTENT
             startActivityForResult(
-                    Intent.createChooser(intent, "Select Picture"),
-                    GET_LOGO_FROM_GALLERY
+                Intent.createChooser(intent, "Select Picture"),
+                GET_LOGO_FROM_GALLERY
             )
         }
         if (from == resources.getString(R.string.from_app)) {
             startActivityForResult(
-                    Intent(this, ImageListActivity::class.java),
-                    GET_LOGO_FROM_APP
+                Intent(this, ImageListActivity::class.java),
+                GET_LOGO_FROM_APP
             )
         }
     }
@@ -240,7 +294,8 @@ class Template1Activity : AppCompatActivity(), OnAddImagesListener, OnTemplateCl
                         val byteArray = data.getByteArrayExtra("image")
                         val bitmap = BitmapFactory.decodeByteArray(byteArray, 0, byteArray!!.size)
                         Glide.with(this).load(bitmap).into(viewBinding.logo)
-                        if (bitmap != null) viewBinding.tvLogo.text = resources.getString(R.string.edit_logo)
+                        if (bitmap != null) viewBinding.tvLogo.text =
+                            resources.getString(R.string.edit_logo)
                     }
                 }
                 GET_FROM_GALLERY -> if (resultCode == Activity.RESULT_OK && data != null) {
@@ -248,7 +303,7 @@ class Template1Activity : AppCompatActivity(), OnAddImagesListener, OnTemplateCl
                     var bitmap: Bitmap? = null
                     try {
                         bitmap =
-                                MediaStore.Images.Media.getBitmap(this.contentResolver, selectedImage)
+                            MediaStore.Images.Media.getBitmap(this.contentResolver, selectedImage)
                         viewBinding.imgMain.setImageBitmap(bitmap)
                     } catch (e: FileNotFoundException) {
                         e.printStackTrace()
@@ -262,9 +317,10 @@ class Template1Activity : AppCompatActivity(), OnAddImagesListener, OnTemplateCl
                     try {
 
                         bitmap =
-                                MediaStore.Images.Media.getBitmap(this.contentResolver, selectedImage)
+                            MediaStore.Images.Media.getBitmap(this.contentResolver, selectedImage)
                         viewBinding.logo.setImageBitmap(bitmap)
-                        if (bitmap != null) viewBinding.tvLogo.text = resources.getString(R.string.edit_logo)
+                        if (bitmap != null) viewBinding.tvLogo.text =
+                            resources.getString(R.string.edit_logo)
 
                     } catch (e: FileNotFoundException) {
                         e.printStackTrace()
@@ -337,7 +393,7 @@ class Template1Activity : AppCompatActivity(), OnAddImagesListener, OnTemplateCl
             fontAdapter = FontAdapter(list!!, this, this)
             viewBinding.rv.adapter = fontAdapter
             viewBinding.rv.layoutManager =
-                    LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+                LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
         }
     }
 
@@ -457,7 +513,7 @@ class Template1Activity : AppCompatActivity(), OnAddImagesListener, OnTemplateCl
     private fun viewToImage(view: View): Bitmap? {
 
         val returnedBitmap =
-                Bitmap.createBitmap(view.width, view.height, Bitmap.Config.ARGB_8888)
+            Bitmap.createBitmap(view.width, view.height, Bitmap.Config.ARGB_8888)
         val canvas = Canvas(returnedBitmap)
         val bgDrawable = view.background
         if (bgDrawable != null) bgDrawable.draw(canvas) else canvas.drawColor(Color.WHITE)
@@ -469,6 +525,7 @@ class Template1Activity : AppCompatActivity(), OnAddImagesListener, OnTemplateCl
         menuInflater.inflate(R.menu.option_menu, menu)
         return super.onCreateOptionsMenu(menu)
     }
+
 /*
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)

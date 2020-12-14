@@ -4,6 +4,7 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Patterns
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
@@ -43,7 +44,6 @@ class LoginActivity : AppCompatActivity(), OnLoginListener {
             validateAndSignInUser()
         }
 
-
     }
 
     private fun validateAndSignInUser() {
@@ -53,6 +53,7 @@ class LoginActivity : AppCompatActivity(), OnLoginListener {
             MyUtils.setEDTError(viewBinding.edtPass, "Password must at least 6 character long.")
             flag = false
         }
+
         if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
             MyUtils.setEDTError(viewBinding.edtEmail, "Please enter valid email.")
             flag = false
@@ -72,7 +73,7 @@ class LoginActivity : AppCompatActivity(), OnLoginListener {
                     startActivity(Intent(this, SelectPostTypeActivity::class.java))
                     finish()
                 }
-            }
+            } else Toast.makeText(this, "Enter Valid Email Id/Password", Toast.LENGTH_SHORT).show()
         })
     }
 
