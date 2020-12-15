@@ -1,26 +1,32 @@
 package com.maxgen.postmakerapp.activity
 
+import android.Manifest
 import android.app.Activity
-import android.content.ContextWrapper
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.content.res.AssetManager
 import android.graphics.*
-import android.media.MediaScannerConnection
 import android.net.Uri
 import android.os.Bundle
-import android.os.Environment
 import android.provider.MediaStore
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.SeekBar
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.gms.ads.AdListener
 import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.InterstitialAd
+import com.google.android.gms.ads.LoadAdError
 import com.maxgen.postmakerapp.R
 import com.maxgen.postmakerapp.adapter.FontAdapter
 import com.maxgen.postmakerapp.adapter.OnAddImagesListener
@@ -30,12 +36,13 @@ import com.maxgen.postmakerapp.databinding.ActivityCreatePostBinding
 import com.maxgen.postmakerapp.model.AssetModel
 import com.maxgen.postmakerapp.model.UserModel
 import com.maxgen.postmakerapp.multiTouchLib.MultiTouchListener
+import com.maxgen.postmakerapp.utils.MyUtils
 import com.maxgen.postmakerapp.utils.SharedPreferenceUser
 import com.maxgen.postmakerapp.viewmodel.TemplateViewModel
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_template1.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.launch
 import java.io.File
 import java.io.FileNotFoundException
 import java.io.FileOutputStream
@@ -46,6 +53,8 @@ class CreatePostActivity : AppCompatActivity(), OnFontChangeListener, OnTemplate
     OnAddImagesListener {
 
     private lateinit var viewBinding: ActivityCreatePostBinding
+    private lateinit var mInterstitialAd: InterstitialAd
+    private val PERMISSION_REQUEST_CODE = 200
 
     private var image: ImageView? = null
     private var textView: View? = null
@@ -65,6 +74,9 @@ class CreatePostActivity : AppCompatActivity(), OnFontChangeListener, OnTemplate
         val adRequest = AdRequest.Builder().build()
         viewBinding.adView.loadAd(adRequest)
 
+        mInterstitialAd = InterstitialAd(this)
+        mInterstitialAd.adUnitId = resources.getString(R.string.interstitial_ad_unit_id)
+        mInterstitialAd.loadAd(AdRequest.Builder().build())
         setSupportActionBar(viewBinding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
@@ -78,8 +90,63 @@ class CreatePostActivity : AppCompatActivity(), OnFontChangeListener, OnTemplate
         viewModel?.imageListener = this
 
         setupUI()
+    }
 
+    override fun onStart() {
+        super.onStart()
 
+        mInterstitialAd = InterstitialAd(this)
+        mInterstitialAd.adUnitId = resources.getString(R.string.interstitial_ad_unit_id)
+        mInterstitialAd.loadAd(AdRequest.Builder().build())
+    }
+
+    private fun checkPermission(): Boolean {
+        val result: Int =
+            ContextCompat.checkSelfPermission(
+                applicationContext,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE
+            )
+        return result == PackageManager.PERMISSION_GRANTED
+    }
+
+    private fun requestPermission() {
+
+        if (shouldShowRequestPermissionRationale(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf<String>(Manifest.permission.WRITE_EXTERNAL_STORAGE),
+                PERMISSION_REQUEST_CODE
+            )
+        }
+
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        when (requestCode) {
+            PERMISSION_REQUEST_CODE -> {
+                if (grantResults.isNotEmpty()) {
+
+                    val storageAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED;
+
+                    if (storageAccepted) {
+
+                    } else {
+                        Toast.makeText(
+                            this,
+                            "Please Grant Permission to Save Post",
+                            Toast.LENGTH_SHORT
+                        ).show()
+
+                    }
+
+                }
+            }
+        }
     }
 
     private fun setupUI() {
@@ -94,9 +161,13 @@ class CreatePostActivity : AppCompatActivity(), OnFontChangeListener, OnTemplate
         val user = SharedPreferenceUser.getInstance().getUser(this)
         viewBinding.user = user
 
-        CoroutineScope(IO).launch {
+        Observable.fromRunnable<Any> {
             loadImage(user)
         }
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe()
+
 
         if (user.email.isNotEmpty() && user.phone.isNotEmpty()) {
             viewBinding.edtWeb.setText(user.website + " | " + user.phone)
@@ -104,10 +175,6 @@ class CreatePostActivity : AppCompatActivity(), OnFontChangeListener, OnTemplate
             viewBinding.edtWeb.setText(user.website + user.phone)
         }
 
-        viewBinding.toolbar.setOnMenuItemClickListener {
-            menuItemSelected(it)
-            return@setOnMenuItemClickListener false
-        }
 
         viewBinding.llLogo.setOnClickListener {
             if (viewBinding.tvLogo.text == resources.getString(R.string.add_logo))
@@ -174,54 +241,116 @@ class CreatePostActivity : AppCompatActivity(), OnFontChangeListener, OnTemplate
         }
     }
 
-    private suspend fun loadImage(user: UserModel) {
-        if (user.imageUrl.isNotEmpty()) {
-            val url = URL(user.imageUrl)
-            val image: Bitmap = BitmapFactory.decodeStream(url.openConnection().getInputStream())
-            viewBinding.imgLogo.addSticker(image)
+    private fun loadImage(user: UserModel) {
+
+        if (MyUtils.hasActiveInternetConnection(this)) {
+            if (user.imageUrl.isNotEmpty()) {
+                val url = URL(user.imageUrl)
+                val image: Bitmap =
+                    BitmapFactory.decodeStream(url.openConnection().getInputStream())
+                viewBinding.imgLogo.addSticker(image)
+            }
         }
     }
 
-    private fun menuItemSelected(it: MenuItem?) {
-        if (it?.itemId == R.id.action_save) {
-            viewBinding.edtMain.isCursorVisible = false
-            val post: Bitmap? = viewToImage(viewBinding.fotoBox)
-            if (post != null) {
-                saveToExternalStorage(post)
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+
+        val post: Bitmap? = viewToImage(viewBinding.fotoBox)
+
+        when (item.itemId) {
+            R.id.action_save -> {
+
+                if (mInterstitialAd.isLoaded) {
+                    mInterstitialAd.show()
+                    mInterstitialAd.adListener = object : AdListener() {
+                        override fun onAdLoaded() {
+                            // Code to be executed when an ad finishes loading.
+                        }
+
+                        override fun onAdFailedToLoad(adError: LoadAdError) {
+                            // Code to be executed when an ad request fails.
+                        }
+
+                        override fun onAdOpened() {
+                            // Code to be executed when the ad is displayed.
+                        }
+
+                        override fun onAdClicked() {
+                            // Code to be executed when the user clicks on an ad.
+                        }
+
+                        override fun onAdLeftApplication() {
+                            // Code to be executed when the user has left the app.
+                        }
+
+                        override fun onAdClosed() {
+                            // Code to be executed when the interstitial ad is closed.
+                            if (checkPermission())
+                                MyUtils.saveMediaToStorage(this@CreatePostActivity, post)
+                            else requestPermission()
+
+                            viewBinding.imgEdit.visibility = View.VISIBLE
+                            viewBinding.imgEditWeb.visibility = View.VISIBLE
+                            viewBinding.edtLayout.visibility = View.VISIBLE
+                            viewBinding.webLayout.visibility = View.VISIBLE
+                            viewBinding.edtMain.isCursorVisible = true
+                        }
+                    }
+
+                } else {
+                    if (checkPermission())
+                        MyUtils.saveMediaToStorage(this, post)
+                    else requestPermission()
+
+                    Log.d("TAG", "The interstitial wasn't loaded yet.")
+
+                    viewBinding.imgEdit.visibility = View.VISIBLE
+                    viewBinding.imgEditWeb.visibility = View.VISIBLE
+                    viewBinding.edtLayout.visibility = View.VISIBLE
+                    viewBinding.webLayout.visibility = View.VISIBLE
+                    viewBinding.edtMain.isCursorVisible = true
+                }
+            }
+
+            R.id.action_share -> {
+                if (mInterstitialAd.isLoaded) {
+                    mInterstitialAd.show()
+                    mInterstitialAd.adListener = object : AdListener() {
+                        override fun onAdLoaded() {
+                            // Code to be executed when an ad finishes loading.
+                        }
+
+                        override fun onAdFailedToLoad(adError: LoadAdError) {
+                            // Code to be executed when an ad request fails.
+                        }
+
+                        override fun onAdOpened() {
+                            // Code to be executed when the ad is displayed.
+                        }
+
+                        override fun onAdClicked() {
+                            // Code to be executed when the user clicks on an ad.
+                        }
+
+                        override fun onAdLeftApplication() {
+                            // Code to be executed when the user has left the app.
+                        }
+
+                        override fun onAdClosed() {
+
+                            saveImageToInternalStorage(post)
+                            // Code to be executed when the interstitial ad is closed.
+                        }
+                    }
+                } else {
+                    Log.d("TAG", "The interstitial wasn't loaded yet.")
+
+                    saveImageToInternalStorage(post)
+                }
+
             }
         }
-
-        if (it?.itemId == R.id.action_share) {
-            if (viewBinding.edtMain.text.isNullOrEmpty()) {
-                viewBinding.edtMain.visibility = View.GONE
-            }
-            if (viewBinding.edtWeb.text.isNullOrEmpty()) {
-                viewBinding.edtWeb.visibility = View.GONE
-            }
-            viewBinding.imgEditWeb.visibility = View.GONE
-            viewBinding.imgEdit.visibility = View.GONE
-            viewBinding.edtMain.isCursorVisible = false
-            val post: Bitmap? = viewToImage(viewBinding.fotoBox)
-
-            saveImageToInternalStorage(post)
-//
-//            val uri = Uri.parse(
-//                MediaStore.Images.Media.insertImage(
-//                    contentResolver,
-//                    post!!,
-//                    null,
-//                    null
-//                )
-//            )
-//
-//            val share = Intent(Intent.ACTION_SEND)
-//            share.type = "image/*"
-//            share.putExtra(Intent.EXTRA_STREAM, uri)
-//
-//            startActivity(Intent.createChooser(share, "Share Image"))
-
-        }
-
+        return super.onOptionsItemSelected(item)
     }
 
     private fun saveImageToInternalStorage(post: Bitmap?) {
@@ -254,13 +383,15 @@ class CreatePostActivity : AppCompatActivity(), OnFontChangeListener, OnTemplate
         shareIntent.putExtra(Intent.EXTRA_STREAM, contentUri)
         startActivity(Intent.createChooser(shareIntent, "Choose an app"))
 
-        viewBinding.edtMain.visibility = View.VISIBLE
-        viewBinding.edtWeb.visibility = View.VISIBLE
+
+        viewBinding.imgEdit.visibility = View.VISIBLE
+        viewBinding.imgEditWeb.visibility = View.VISIBLE
+        viewBinding.edtLayout.visibility = View.VISIBLE
+        viewBinding.webLayout.visibility = View.VISIBLE
         viewBinding.edtMain.isCursorVisible = true
     }
 
     private fun setLogo(bitmap: Bitmap?) = viewBinding.imgLogo.addSticker(bitmap)
-
 
     private fun setImage(bitmap: Bitmap?) {
         viewBinding.imgMain.setImageBitmap(bitmap)
@@ -278,6 +409,7 @@ class CreatePostActivity : AppCompatActivity(), OnFontChangeListener, OnTemplate
                         if (bitmap != null) setImage(bitmap)
                     }
                 }
+
                 GET_LOGO_FROM_APP -> {
                     if (resultCode == Activity.RESULT_OK && data != null) {
                         val byteArray = data.getByteArrayExtra("image")
@@ -288,6 +420,7 @@ class CreatePostActivity : AppCompatActivity(), OnFontChangeListener, OnTemplate
                         }
                     }
                 }
+
                 GET_FROM_GALLERY -> if (resultCode == Activity.RESULT_OK && data != null) {
                     val imageUri = data.data
                     var bitmap: Bitmap? = null
@@ -321,6 +454,16 @@ class CreatePostActivity : AppCompatActivity(), OnFontChangeListener, OnTemplate
 
 
     private fun viewToImage(view: View): Bitmap? {
+        if (viewBinding.edtMain.text.isNullOrEmpty()) {
+            viewBinding.edtLayout.visibility = View.GONE
+        }
+
+        if (viewBinding.edtWeb.text.isNullOrEmpty()) {
+            viewBinding.webLayout.visibility = View.GONE
+        }
+        viewBinding.edtMain.isCursorVisible = false
+        viewBinding.imgEdit.visibility = View.GONE
+        viewBinding.imgEditWeb.visibility = View.GONE
 
         val returnedBitmap =
             Bitmap.createBitmap(view.width, view.height, Bitmap.Config.ARGB_8888)
@@ -336,53 +479,13 @@ class CreatePostActivity : AppCompatActivity(), OnFontChangeListener, OnTemplate
         return super.onCreateOptionsMenu(menu)
     }
 
-
-    private fun saveToExternalStorage(image_bitmap: Bitmap) {
-        val root = getExternalFilesDir(Environment.DIRECTORY_PICTURES)?.absolutePath
-
-        val myDir = File(root, "/saved_images")
-        if (!myDir.exists()) {
-            myDir.mkdirs()
-        }
-        val fname = "Image-" + "image_name" + ".jpg"
-        val file = File(myDir, fname)
-        if (file.exists()) {
-            file.delete()
-        }
-        try {
-            file.createNewFile() // if file already exists will do nothing
-            val out = FileOutputStream(file)
-            image_bitmap.compress(Bitmap.CompressFormat.JPEG, 90, out)
-            out.flush()
-            out.close()
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-        MediaScannerConnection.scanFile(
-            this,
-            arrayOf<String>(file.toString()),
-            arrayOf<String>(file.getName()),
-            null
-        )
-    }
-
-    private fun saveToInternalStorage(bitmapImage: Bitmap) {
-        val path = File(ContextWrapper(this).filesDir, "MyAppName" + File.separator + "Images")
-        if (!path.exists()) {
-            path.mkdirs()
-        }
-        val outFile = File(path, "imageName" + ".jpeg")
-        val outputStream = FileOutputStream(outFile)
-        bitmapImage.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
-        outputStream.close()
-    }
-
     companion object {
         const val GET_FROM_APP = 1
         const val GET_LOGO_FROM_APP = 2
         const val GET_FROM_GALLERY = 3
         const val GET_LOGO_FROM_GALLERY = 4
         const val GET_FROM_CAMERA = 5
+        private const val TAG = "CreatePostActivity"
     }
 
     override fun onFontChange(typeface: Typeface) {
@@ -555,9 +658,9 @@ class CreatePostActivity : AppCompatActivity(), OnFontChangeListener, OnTemplate
         viewBinding.imgLogo.setImageDrawable(null)
         viewBinding.imgMain.setImageDrawable(null)
         viewBinding.imgMain.setImageBitmap(null)
-        viewBinding.imgLogo.removeSticker()
-        viewBinding.edtLayout.visibility = View.GONE
-        viewBinding.webLayout.visibility = View.GONE
+        // viewBinding.imgLogo.removeSticker()
+        //  viewBinding.edtLayout.visibility = View.GONE
+        //  viewBinding.webLayout.visibility = View.GONE
         checkLogoDrawable()
 
     }

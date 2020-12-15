@@ -67,33 +67,33 @@ class TemplateViewModel : ViewModel() {
 
     fun onEditLogoSelected(context: Context) {
         val options = arrayOf<CharSequence>(
-                "Change logo",
-                "Change logo Position",
-                "Resize logo",
-                "Remove logo",
-                "Cancel"
+            "Change logo",
+            "Change logo Position",
+            "Resize logo",
+            "Remove logo",
+            "Cancel"
         )
         AlertDialog.Builder(context)
-                .setTitle("Choose Action")
-                .setItems(options, DialogInterface.OnClickListener { dialog, which ->
-                    when {
-                        options[which] == "Change logo" -> {
-                            onAddLogoSelected(context)
-                        }
-                        options[which] == "Change logo Position" -> {
-                            cornerSelectionListener?.changeLogoPosition()
-                        }
-                        options[which] == "Resize logo" -> {
-                            cornerSelectionListener?.resizeLogo()
-                        }
-                        options[which] == "Remove logo" -> {
-                            cornerSelectionListener?.removeLogo()
-                        }
-                        options[which] == "Cancel" -> {
-                            dialog.dismiss()
-                        }
+            .setTitle("Choose Action")
+            .setItems(options, DialogInterface.OnClickListener { dialog, which ->
+                when {
+                    options[which] == "Change logo" -> {
+                        onAddLogoSelected(context)
                     }
-                }).show()
+                    options[which] == "Change logo Position" -> {
+                        cornerSelectionListener?.changeLogoPosition()
+                    }
+                    options[which] == "Resize logo" -> {
+                        cornerSelectionListener?.resizeLogo()
+                    }
+                    options[which] == "Remove logo" -> {
+                        cornerSelectionListener?.removeLogo()
+                    }
+                    options[which] == "Cancel" -> {
+                        dialog.dismiss()
+                    }
+                }
+            }).show()
     }
 
     fun onQuoteEditSelected(view: View) {
@@ -102,22 +102,22 @@ class TemplateViewModel : ViewModel() {
 
     fun onChangeTextColorSelected(view: View) {
         ColorPickerDialogBuilder
-                .with(view.context)
-                .setTitle("Choose color")
-                .wheelType(ColorPickerView.WHEEL_TYPE.FLOWER)
-                .density(12)
-                .setOnColorSelectedListener {
-                    clickListeners?.changeTextColor(it)
-                }
-                .setPositiveButton("ok", ColorPickerClickListener { d, lastSelectedColor, allColors ->
-                    clickListeners?.changeTextColor(lastSelectedColor)
+            .with(view.context)
+            .setTitle("Choose color")
+            .wheelType(ColorPickerView.WHEEL_TYPE.FLOWER)
+            .density(12)
+            .setOnColorSelectedListener {
+                clickListeners?.changeTextColor(it)
+            }
+            .setPositiveButton("ok", ColorPickerClickListener { d, lastSelectedColor, allColors ->
+                clickListeners?.changeTextColor(lastSelectedColor)
 
-                })
-                .setNegativeButton("cancel", DialogInterface.OnClickListener { dialog, which ->
-                    dialog.dismiss()
-                })
-                .build()
-                .show()
+            })
+            .setNegativeButton("cancel", DialogInterface.OnClickListener { dialog, which ->
+                dialog.dismiss()
+            })
+            .build()
+            .show()
     }
 
     fun onChangeTextStyleSelected(view: View) {
@@ -183,38 +183,40 @@ class TemplateViewModel : ViewModel() {
 
     fun onEdit1LogoSelected(context: Context) {
         val options = arrayOf<CharSequence>(
-                "Change logo",
-                "Resize logo",
-                "Remove logo",
-                "Cancel"
+            "Change logo",
+            "Resize logo",
+            "Remove logo",
+            "Cancel"
         )
         AlertDialog.Builder(context)
-                .setTitle("Choose Action")
-                .setItems(options, DialogInterface.OnClickListener { dialog, which ->
-                    when {
-                        options[which] == "Change logo" -> {
-                            onAddLogoSelected(context)
-                        }
-                        options[which] == "Resize logo" -> {
-                            cornerSelectionListener?.resizeLogo()
-                        }
-                        options[which] == "Remove logo" -> {
-                            cornerSelectionListener?.removeLogo()
-                        }
-                        options[which] == "Cancel" -> {
-                            dialog.dismiss()
-                        }
+            .setTitle("Choose Action")
+            .setItems(options, DialogInterface.OnClickListener { dialog, which ->
+                when {
+                    options[which] == "Change logo" -> {
+                        onAddLogoSelected(context)
                     }
-                }).show()
+                    options[which] == "Resize logo" -> {
+                        cornerSelectionListener?.resizeLogo()
+                    }
+                    options[which] == "Remove logo" -> {
+                        cornerSelectionListener?.removeLogo()
+                    }
+                    options[which] == "Cancel" -> {
+                        dialog.dismiss()
+                    }
+                }
+            }).show()
     }
 
     fun onDeleteItemsSelected(view: View) {
         val deleteDialog = AlertDialog.Builder(view.context)
-                .setTitle("Are You Sure?")
-                .setMessage("It will clear all edited items and will not be Restored")
-                .setPositiveButton("Yes, Clear", DialogInterface.OnClickListener { dialog, which ->
-                    clickListeners?.deleteAllItems()
-                }).setNegativeButton("No", DialogInterface.OnClickListener { dialog, which -> dialog.dismiss() })
+            .setTitle("Are You Sure?")
+            .setMessage("It will clear all edited items and will not be Restored")
+            .setPositiveButton("Yes, Clear", DialogInterface.OnClickListener { dialog, which ->
+                clickListeners?.deleteAllItems()
+            }).setNegativeButton(
+                "No",
+                DialogInterface.OnClickListener { dialog, which -> dialog.dismiss() })
 
         deleteDialog.show()
     }

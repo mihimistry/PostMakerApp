@@ -286,7 +286,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:gravity="center"
-                            android:text="Background\nImage"
+                            android:text="Background"
                             android:textSize="@dimen/_10sdp" />
 
                     </LinearLayout>
@@ -356,7 +356,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Edit Texts"
+                            android:text="Text Edit"
                             android:textSize="@dimen/_10sdp" />
 
                     </LinearLayout>

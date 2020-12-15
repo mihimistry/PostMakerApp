@@ -1,22 +1,30 @@
 package com.maxgen.postmakerapp.activity
 
+import android.Manifest
 import android.app.Activity
+import android.content.ContentValues
 import android.content.Context
 import android.content.ContextWrapper
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.content.res.AssetManager
 import android.database.Cursor
 import android.graphics.*
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.SeekBar
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintSet
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -29,19 +37,19 @@ import com.maxgen.postmakerapp.R
 import com.maxgen.postmakerapp.adapter.*
 import com.maxgen.postmakerapp.databinding.ActivityTemplate2Binding
 import com.maxgen.postmakerapp.model.AssetModel
+import com.maxgen.postmakerapp.utils.MyUtils
 import com.maxgen.postmakerapp.utils.SharedPreferenceUser
 import com.maxgen.postmakerapp.viewmodel.TemplateViewModel
 import kotlinx.android.synthetic.main.activity_template1.*
-import java.io.File
-import java.io.FileNotFoundException
-import java.io.FileOutputStream
-import java.io.IOException
+import java.io.*
 
 
 class Template2Activity : AppCompatActivity(), OnAddImagesListener, OnTemplateClickListeners,
     OnCornerSelectionListener, OnFontChangeListener {
     private lateinit var viewBinding: ActivityTemplate2Binding
     private lateinit var mInterstitialAd: InterstitialAd
+    private val PERMISSION_REQUEST_CODE = 200
+
     private var list: ArrayList<AssetModel>? = null
     private var fontAdapter: FontAdapter? = null
     private var logoBitmap: Bitmap? = null
@@ -58,6 +66,9 @@ class Template2Activity : AppCompatActivity(), OnAddImagesListener, OnTemplateCl
         val adRequest = AdRequest.Builder().build()
         viewBinding.adView.loadAd(adRequest)
 
+        mInterstitialAd = InterstitialAd(this)
+        mInterstitialAd.adUnitId = resources.getString(R.string.interstitial_ad_unit_id)
+        mInterstitialAd.loadAd(AdRequest.Builder().build())
         setViewModel()
         setUI()
     }
@@ -70,6 +81,56 @@ class Template2Activity : AppCompatActivity(), OnAddImagesListener, OnTemplateCl
         mInterstitialAd.loadAd(AdRequest.Builder().build())
 
     }
+
+    private fun checkPermission(): Boolean {
+        val result: Int =
+            ContextCompat.checkSelfPermission(
+                applicationContext,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE
+            )
+        return result == PackageManager.PERMISSION_GRANTED
+    }
+
+    private fun requestPermission() {
+
+        if (shouldShowRequestPermissionRationale(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf<String>(Manifest.permission.WRITE_EXTERNAL_STORAGE),
+                PERMISSION_REQUEST_CODE
+            )
+        }
+
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        when (requestCode) {
+            PERMISSION_REQUEST_CODE -> {
+                if (grantResults.isNotEmpty()) {
+
+                    val storageAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED;
+
+                    if (storageAccepted) {
+
+                    } else {
+                        Toast.makeText(
+                            this,
+                            "Please Grant Permission to Save Post",
+                            Toast.LENGTH_SHORT
+                        ).show()
+
+                    }
+
+                }
+            }
+        }
+    }
+
 
     private fun setViewModel() {
         viewModel = ViewModelProvider(this).get(TemplateViewModel::class.java)
@@ -297,6 +358,9 @@ class Template2Activity : AppCompatActivity(), OnAddImagesListener, OnTemplateCl
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
+
+        val post: Bitmap? = viewToImage(viewBinding.fotoBox)
+
         when (item.itemId) {
             R.id.action_save -> {
                 if (mInterstitialAd.isLoaded) {
@@ -324,13 +388,22 @@ class Template2Activity : AppCompatActivity(), OnAddImagesListener, OnTemplateCl
 
                         override fun onAdClosed() {
                             // Code to be executed when the interstitial ad is closed.
+                            if (checkPermission())
+                                MyUtils.saveMediaToStorage(this@Template2Activity, post)
+                            else requestPermission()
+
                         }
                     }
 
                 } else {
+                    if (checkPermission())
+                        MyUtils.saveMediaToStorage(this, post)
+                    else requestPermission()
+
                     Log.d("TAG", "The interstitial wasn't loaded yet.")
                 }
             }
+
             R.id.action_share -> {
                 if (mInterstitialAd.isLoaded) {
                     mInterstitialAd.show()
@@ -356,33 +429,14 @@ class Template2Activity : AppCompatActivity(), OnAddImagesListener, OnTemplateCl
                         }
 
                         override fun onAdClosed() {
-                            var uri: Uri? = null
-                            if (viewBinding.edtMain.text.isNullOrEmpty()) {
-                                viewBinding.edtMain.visibility = View.GONE
-                            }
 
-                            if (viewBinding.edtWeb.text.isNullOrEmpty()) {
-                                viewBinding.edtWeb.visibility = View.GONE
-                            }
-                            viewBinding.edtMain.isCursorVisible = false
-                            val post: Bitmap? = viewToImage(viewBinding.fotoBox)
                             saveImageToInternalStorage(post)
-
                             // Code to be executed when the interstitial ad is closed.
                         }
                     }
                 } else {
                     Log.d("TAG", "The interstitial wasn't loaded yet.")
-                    var uri: Uri? = null
-                    if (viewBinding.edtMain.text.isNullOrEmpty()) {
-                        viewBinding.edtMain.visibility = View.GONE
-                    }
 
-                    if (viewBinding.edtWeb.text.isNullOrEmpty()) {
-                        viewBinding.edtWeb.visibility = View.GONE
-                    }
-                    viewBinding.edtMain.isCursorVisible = false
-                    val post: Bitmap? = viewToImage(viewBinding.fotoBox)
                     saveImageToInternalStorage(post)
                 }
 
@@ -406,6 +460,50 @@ class Template2Activity : AppCompatActivity(), OnAddImagesListener, OnTemplateCl
             }
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    private fun saveMediaToStorage(bitmap: Bitmap?) {
+        //Generating a file name
+        val filename = "${System.currentTimeMillis()}.jpg"
+
+        //Output stream
+        var fos: OutputStream? = null
+
+        //For devices running android >= Q
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            //getting the contentResolver
+            contentResolver?.also { resolver ->
+
+                //Content resolver will process the contentvalues
+                val contentValues = ContentValues().apply {
+
+                    //putting file information in content values
+                    put(MediaStore.MediaColumns.DISPLAY_NAME, filename)
+                    put(MediaStore.MediaColumns.MIME_TYPE, "image/jpg")
+                    put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_PICTURES)
+                }
+
+                //Inserting the contentValues to contentResolver and getting the Uri
+                val imageUri: Uri? =
+                    resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
+
+                //Opening an outputstream with the Uri that we got
+                fos = imageUri?.let { resolver.openOutputStream(it) }
+            }
+        } else {
+            //These for devices running on android < Q
+            //So I don't think an explanation is needed here
+            val imagesDir =
+                Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
+            val image = File(imagesDir, filename)
+            fos = FileOutputStream(image)
+        }
+
+        fos?.use {
+            //Finally writing the bitmap to the output stream that we opened
+            bitmap?.compress(Bitmap.CompressFormat.JPEG, 100, it)
+            Toast.makeText(this, "Post saved", Toast.LENGTH_SHORT).show()
+        }
     }
 
     private fun shareNewImage(post: Bitmap?) {
@@ -742,6 +840,14 @@ class Template2Activity : AppCompatActivity(), OnAddImagesListener, OnTemplateCl
     }
 
     private fun viewToImage(view: View): Bitmap? {
+        if (viewBinding.edtMain.text.isNullOrEmpty()) {
+            viewBinding.edtMain.visibility = View.GONE
+        }
+
+        if (viewBinding.edtWeb.text.isNullOrEmpty()) {
+            viewBinding.edtWeb.visibility = View.GONE
+        }
+        viewBinding.edtMain.isCursorVisible = false
         val returnedBitmap = Bitmap.createBitmap(view.width, view.height, Bitmap.Config.ARGB_8888)
         val canvas = Canvas(returnedBitmap)
         val bgDrawable = view.background

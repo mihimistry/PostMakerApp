@@ -23,7 +23,7 @@ class SharedPreferenceUser private constructor() {
         editor.putString(UserModel.UserEnum.pass.name, user.pass)
         editor.putString(UserModel.UserEnum.phone.name, user.phone)
         editor.putString(UserModel.UserEnum.website.name, user.website)
-        editor.putString(UserModel.UserEnum.imageUrl.name,user.imageUrl)
+        editor.putString(UserModel.UserEnum.imageUrl.name, user.imageUrl)
         editor.apply()
     }
 
@@ -37,7 +37,7 @@ class SharedPreferenceUser private constructor() {
             userPreferences.getString(UserModel.UserEnum.pass.name, "")!!,
             userPreferences.getString(UserModel.UserEnum.phone.name, "")!!,
             userPreferences.getString(UserModel.UserEnum.website.name, "")!!,
-            userPreferences.getString(UserModel.UserEnum.imageUrl.name,"")!!
+            userPreferences.getString(UserModel.UserEnum.imageUrl.name, "")!!
         )
     }
 

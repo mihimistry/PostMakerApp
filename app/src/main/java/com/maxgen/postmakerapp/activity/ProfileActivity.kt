@@ -98,6 +98,7 @@ class ProfileActivity : AppCompatActivity(), OnImageClickListener {
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode != RESULT_CANCELED) {
             when (requestCode) {
@@ -132,8 +133,7 @@ class ProfileActivity : AppCompatActivity(), OnImageClickListener {
         val user = SharedPreferenceUser.getInstance().getUser(this)
         if (user.imageUrl.isNotEmpty())
             viewModel?.changeProfileImage(user.imageUrl, imageUri, user.email)
-        else
-            viewModel?.uploadImage(imageUri, user.email)
+        else viewModel?.uploadImage(imageUri, user.email)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

@@ -33,7 +33,6 @@
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
-
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -49,11 +48,11 @@
         android:id="@+id/cv_profile"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="@dimen/_25sdp"
+        android:layout_marginHorizontal="@dimen/_20sdp"
         android:outlineSpotShadowColor="@color/colorPrimary"
         app:cardCornerRadius="@dimen/_8sdp"
         app:cardElevation="@dimen/_5sdp"
-        app:layout_constraintBottom_toTopOf="@id/cv_template"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout6"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/toolbar"
@@ -63,64 +62,84 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="#E2E7FA"
             android:gravity="center"
-            android:padding="@dimen/_25sdp"
+            android:padding="@dimen/_40sdp"
             android:text="Profile"
             android:textColor="@android:color/black"
             android:textSize="@dimen/_15sdp" />
     </com.google.android.material.card.MaterialCardView>
 
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/cv_template"
+    <LinearLayout
+        android:id="@+id/linearLayout6"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="@dimen/_25sdp"
-        android:layout_weight="1"
-        android:outlineSpotShadowColor="@color/colorPrimary"
-        app:cardCornerRadius="@dimen/_8sdp"
-        app:cardElevation="@dimen/_5sdp"
-        app:layout_constraintBottom_toTopOf="@+id/cv_create"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/cv_profile"
-        app:strokeColor="@color/colorPrimary"
-        app:strokeWidth="@dimen/_1sdp">
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:padding="@dimen/_25sdp"
-            android:text="Select Template"
-            android:textColor="@android:color/black"
-            android:textSize="@dimen/_15sdp" />
-    </com.google.android.material.card.MaterialCardView>
-
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/cv_create"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="@dimen/_25sdp"
-        android:layout_weight="1"
-        android:outlineSpotShadowColor="@color/colorPrimary"
-        app:cardCornerRadius="@dimen/_8sdp"
-        app:cardElevation="@dimen/_5sdp"
+        android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/cv_template"
-        app:strokeColor="@color/colorPrimary"
-        app:strokeWidth="@dimen/_1sdp">
+        app:layout_constraintTop_toBottomOf="@id/cv_profile">
 
-        <TextView
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cv_template"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:padding="@dimen/_25sdp"
-            android:text="Create Manually"
-            android:textColor="@android:color/black"
-            android:textSize="@dimen/_15sdp" />
-    </com.google.android.material.card.MaterialCardView>
+            android:layout_marginVertical="@dimen/_20sdp"
+            android:layout_marginStart="@dimen/_20sdp"
+            android:layout_marginEnd="@dimen/_10sdp"
+            android:layout_weight="1"
+            android:outlineSpotShadowColor="@color/colorPrimary"
+            app:cardCornerRadius="@dimen/_8sdp"
+            app:cardElevation="@dimen/_5sdp"
+            app:layout_constraintBottom_toTopOf="@+id/cv_create"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/cv_profile"
+            app:strokeColor="@color/colorPrimary"
+            app:strokeWidth="@dimen/_1sdp">
 
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#E2E7FA"
+                android:gravity="center"
+                android:paddingHorizontal="@dimen/_25sdp"
+                android:paddingVertical="@dimen/_40sdp"
+
+                android:text="Select Template"
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/_15sdp" />
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cv_create"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="@dimen/_20sdp"
+            android:layout_marginStart="@dimen/_10sdp"
+            android:layout_marginEnd="@dimen/_20sdp"
+            android:layout_weight="1"
+            android:outlineSpotShadowColor="@color/colorPrimary"
+            app:cardCornerRadius="@dimen/_8sdp"
+            app:cardElevation="@dimen/_5sdp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/cv_template"
+            app:strokeColor="@color/colorPrimary"
+            app:strokeWidth="@dimen/_1sdp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#E2E7FA"
+                android:gravity="center"
+                android:paddingHorizontal="@dimen/_25sdp"
+
+                android:paddingVertical="@dimen/_40sdp"
+                android:text="Create Manually"
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/_15sdp" />
+        </com.google.android.material.card.MaterialCardView>
+
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

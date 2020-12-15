@@ -24,7 +24,7 @@ class ExitActivity : AppCompatActivity() {
 
     private fun setupUI() {
 
-        Toast.makeText(this, "Back press again to exit", Toast.LENGTH_SHORT).show()
+        Toast.makeText(this, "Press back again to exit", Toast.LENGTH_SHORT).show()
 
         viewBinding.btnNo.setOnClickListener {
             startActivity(Intent(this, SelectPostTypeActivity::class.java))
