@@ -14,7 +14,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.SeekBar
-import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -26,6 +26,7 @@ import com.google.android.gms.ads.AdListener
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.InterstitialAd
 import com.google.android.gms.ads.LoadAdError
+import com.google.android.material.snackbar.Snackbar
 import com.maxgen.postmakerapp.R
 import com.maxgen.postmakerapp.activity.CreatePostActivity.Companion.GET_FROM_APP
 import com.maxgen.postmakerapp.activity.CreatePostActivity.Companion.GET_FROM_GALLERY
@@ -98,12 +99,21 @@ class Template1Activity : AppCompatActivity(), OnAddImagesListener, OnTemplateCl
     private fun requestPermission() {
 
         if (shouldShowRequestPermissionRationale(WRITE_EXTERNAL_STORAGE)) {
-            ActivityCompat.requestPermissions(
-                this,
-                arrayOf<String>(WRITE_EXTERNAL_STORAGE),
-                PERMISSION_REQUEST_CODE
-            )
-        }
+            AlertDialog.Builder(this)
+                .setMessage(resources.getString(R.string.permission_required))
+                .setPositiveButton("Okay") { _, _ ->
+                    ActivityCompat.requestPermissions(
+                        this,
+                        arrayOf<String>(WRITE_EXTERNAL_STORAGE),
+                        PERMISSION_REQUEST_CODE
+                    )
+                }.setNegativeButton("Cancel") { dialog, _ -> dialog.dismiss() }
+                .create().show()
+        } else ActivityCompat.requestPermissions(
+            this,
+            arrayOf<String>(WRITE_EXTERNAL_STORAGE),
+            PERMISSION_REQUEST_CODE
+        )
 
     }
 
@@ -120,12 +130,14 @@ class Template1Activity : AppCompatActivity(), OnAddImagesListener, OnTemplateCl
                     val storageAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED;
 
                     if (storageAccepted) {
-
+                        Snackbar.make(
+                            viewBinding.root,
+                            "Permission granted Successfully, Now Save Again", 2000
+                        ).show()
                     } else {
-                        Toast.makeText(
-                            this,
-                            "Please Grant Permission to Save Post",
-                            Toast.LENGTH_SHORT
+                        Snackbar.make(
+                            viewBinding.root,
+                            "Please Grant Permission to Save Post", 2000
                         ).show()
 
                     }
@@ -308,6 +320,7 @@ class Template1Activity : AppCompatActivity(), OnAddImagesListener, OnTemplateCl
 
                 override fun onAdClosed() {
                     // Code to be executed when the interstitial ad is closed.
+
                     if (checkPermission())
                         MyUtils.saveMediaToStorage(this@Template1Activity, post)
                     else requestPermission()

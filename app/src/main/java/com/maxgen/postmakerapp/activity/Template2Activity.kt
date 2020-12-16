@@ -21,6 +21,7 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.SeekBar
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.app.ActivityCompat
@@ -33,6 +34,7 @@ import com.google.android.gms.ads.AdListener
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.InterstitialAd
 import com.google.android.gms.ads.LoadAdError
+import com.google.android.material.snackbar.Snackbar
 import com.maxgen.postmakerapp.R
 import com.maxgen.postmakerapp.adapter.*
 import com.maxgen.postmakerapp.databinding.ActivityTemplate2Binding
@@ -94,12 +96,21 @@ class Template2Activity : AppCompatActivity(), OnAddImagesListener, OnTemplateCl
     private fun requestPermission() {
 
         if (shouldShowRequestPermissionRationale(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-            ActivityCompat.requestPermissions(
-                this,
-                arrayOf<String>(Manifest.permission.WRITE_EXTERNAL_STORAGE),
-                PERMISSION_REQUEST_CODE
-            )
-        }
+            AlertDialog.Builder(this)
+                .setMessage(resources.getString(R.string.permission_required))
+                .setPositiveButton("Okay") { _, _ ->
+                    ActivityCompat.requestPermissions(
+                        this,
+                        arrayOf<String>(Manifest.permission.WRITE_EXTERNAL_STORAGE),
+                        PERMISSION_REQUEST_CODE
+                    )
+                }.setNegativeButton("Cancel") { dialog, _ -> dialog.dismiss() }
+                .create().show()
+        } else ActivityCompat.requestPermissions(
+            this,
+            arrayOf<String>(Manifest.permission.WRITE_EXTERNAL_STORAGE),
+            PERMISSION_REQUEST_CODE
+        )
 
     }
 
@@ -116,12 +127,14 @@ class Template2Activity : AppCompatActivity(), OnAddImagesListener, OnTemplateCl
                     val storageAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED;
 
                     if (storageAccepted) {
-
+                        Snackbar.make(
+                            viewBinding.root,
+                            "Permission granted Successfully, Now Save Again", 2000
+                        ).show()
                     } else {
-                        Toast.makeText(
-                            this,
-                            "Please Grant Permission to Save Post",
-                            Toast.LENGTH_SHORT
+                        Snackbar.make(
+                            viewBinding.root,
+                            "Please Grant Permission to Save Post", 2000
                         ).show()
 
                     }

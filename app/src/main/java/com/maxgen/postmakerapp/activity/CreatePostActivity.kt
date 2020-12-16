@@ -16,7 +16,7 @@ import android.view.View
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.SeekBar
-import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -27,6 +27,7 @@ import com.google.android.gms.ads.AdListener
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.InterstitialAd
 import com.google.android.gms.ads.LoadAdError
+import com.google.android.material.snackbar.Snackbar
 import com.maxgen.postmakerapp.R
 import com.maxgen.postmakerapp.adapter.FontAdapter
 import com.maxgen.postmakerapp.adapter.OnAddImagesListener
@@ -110,14 +111,22 @@ class CreatePostActivity : AppCompatActivity(), OnFontChangeListener, OnTemplate
     }
 
     private fun requestPermission() {
-
         if (shouldShowRequestPermissionRationale(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-            ActivityCompat.requestPermissions(
-                this,
-                arrayOf<String>(Manifest.permission.WRITE_EXTERNAL_STORAGE),
-                PERMISSION_REQUEST_CODE
-            )
-        }
+            AlertDialog.Builder(this)
+                .setMessage(resources.getString(R.string.permission_required))
+                .setPositiveButton("Okay") { _, _ ->
+                    ActivityCompat.requestPermissions(
+                        this,
+                        arrayOf<String>(Manifest.permission.WRITE_EXTERNAL_STORAGE),
+                        PERMISSION_REQUEST_CODE
+                    )
+                }.setNegativeButton("Cancel") { dialog, _ -> dialog.dismiss() }
+                .create().show()
+        } else ActivityCompat.requestPermissions(
+            this,
+            arrayOf<String>(Manifest.permission.WRITE_EXTERNAL_STORAGE),
+            PERMISSION_REQUEST_CODE
+        )
 
     }
 
@@ -134,12 +143,14 @@ class CreatePostActivity : AppCompatActivity(), OnFontChangeListener, OnTemplate
                     val storageAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED;
 
                     if (storageAccepted) {
-
+                        Snackbar.make(
+                            viewBinding.root,
+                            "Permission granted Successfully, Now Save Again", 2000
+                        ).show()
                     } else {
-                        Toast.makeText(
-                            this,
-                            "Please Grant Permission to Save Post",
-                            Toast.LENGTH_SHORT
+                        Snackbar.make(
+                            viewBinding.root,
+                            "Please Grant Permission to Save Post", 2000
                         ).show()
 
                     }
@@ -163,11 +174,9 @@ class CreatePostActivity : AppCompatActivity(), OnFontChangeListener, OnTemplate
 
         Observable.fromRunnable<Any> {
             loadImage(user)
-        }
-            .subscribeOn(Schedulers.io())
+        }.subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe()
-
 
         if (user.email.isNotEmpty() && user.phone.isNotEmpty()) {
             viewBinding.edtWeb.setText(user.website + " | " + user.phone)
