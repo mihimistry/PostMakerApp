@@ -114,7 +114,6 @@ class Template1Activity : AppCompatActivity(), OnAddImagesListener, OnTemplateCl
             arrayOf<String>(WRITE_EXTERNAL_STORAGE),
             PERMISSION_REQUEST_CODE
         )
-
     }
 
     override fun onRequestPermissionsResult(
@@ -261,34 +260,16 @@ class Template1Activity : AppCompatActivity(), OnAddImagesListener, OnTemplateCl
                         }
 
                         override fun onAdClosed() {
-
                             saveImageToInternalStorage(post)
-                            // Code to be executed when the interstitial ad is closed.
+                            mInterstitialAd.loadAd(AdRequest.Builder().build())
                         }
                     }
                 } else {
-                    Log.d("TAG", "The interstitial wasn't loaded yet.")
-
                     saveImageToInternalStorage(post)
+                    mInterstitialAd.loadAd(AdRequest.Builder().build())
+                    Log.d("TAG", "The interstitial wasn't loaded yet.")
                 }
 
-
-//
-//                val imageUri = Uri.parse(
-//                    MediaStore.Images.Media.insertImage(
-//                        contentResolver, post, null, null
-//                    )
-//                )
-//                // use intent to share image
-//                // use intent to share image
-//                val share = Intent(Intent.ACTION_SEND)
-//                share.type = "image/*"
-//                share.putExtra(Intent.EXTRA_STREAM, imageUri)
-//
-//                share.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-//                startActivity(Intent.createChooser(share, "Share Image"))
-
-                //shareNewImage(post)
             }
         }
         return super.onOptionsItemSelected(item)
@@ -320,10 +301,10 @@ class Template1Activity : AppCompatActivity(), OnAddImagesListener, OnTemplateCl
 
                 override fun onAdClosed() {
                     // Code to be executed when the interstitial ad is closed.
-
                     if (checkPermission())
                         MyUtils.saveMediaToStorage(this@Template1Activity, post)
                     else requestPermission()
+                    mInterstitialAd.loadAd(AdRequest.Builder().build())
 
                     viewBinding.edtMain.visibility = View.VISIBLE
                     viewBinding.edtWeb.visibility = View.VISIBLE
@@ -332,9 +313,12 @@ class Template1Activity : AppCompatActivity(), OnAddImagesListener, OnTemplateCl
             }
 
         } else {
+
             if (checkPermission())
                 MyUtils.saveMediaToStorage(this@Template1Activity, post)
             else requestPermission()
+            mInterstitialAd.loadAd(AdRequest.Builder().build())
+
             Log.d("TAG", "The interstitial wasn't loaded yet.")
 
             viewBinding.edtMain.visibility = View.VISIBLE
@@ -360,35 +344,6 @@ class Template1Activity : AppCompatActivity(), OnAddImagesListener, OnTemplateCl
             val post: Bitmap? = viewToImage(viewBinding.fotoBox)
 
             saveImageToInternalStorage(post)
-//
-//            val relativeLocation = Environment.DIRECTORY_PICTURES + File.pathSeparator + "PostMaker"
-//
-//            val contentValues = ContentValues().apply {
-//                put(MediaStore.MediaColumns.DISPLAY_NAME, System.currentTimeMillis().toString())
-//                put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg")
-//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) { //this one
-//                    put(MediaStore.MediaColumns.RELATIVE_PATH, relativeLocation)
-//                    put(MediaStore.MediaColumns.IS_PENDING, 1)
-//                }
-//            }
-//            val uri =
-//                contentResolver.insert(MediaStore.Images.Media.INTERNAL_CONTENT_URI, contentValues)
-//
-//            val Auri = Uri.parse(
-//                MediaStore.Images.Media.insertImage(
-//                    contentResolver,
-//                    post,
-//                    null,
-//                    null
-//                )
-//            )
-//
-//            val share = Intent(Intent.ACTION_SEND)
-//            share.type = "image/*"
-//            share.putExtra(Intent.EXTRA_STREAM, uri)
-//
-//            startActivity(Intent.createChooser(share, "Share Image"))
-
             viewBinding.edtMain.visibility = View.VISIBLE
             viewBinding.edtWeb.visibility = View.VISIBLE
             viewBinding.edtMain.isCursorVisible = true

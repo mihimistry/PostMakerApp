@@ -14,7 +14,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme.NoActionBar"
         android:usesCleartextTraffic="true">
-        <activity android:name=".activity.UpdateProfileActivity"></activity>
+        <activity android:name=".activity.HomeActivity"></activity>
+        <activity android:name=".activity.UpdateProfileActivity" />
         <activity
             android:name=".activity.ExitActivity"
             android:screenOrientation="portrait" />

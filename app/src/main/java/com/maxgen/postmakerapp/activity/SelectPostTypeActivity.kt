@@ -114,10 +114,9 @@ class SelectPostTypeActivity : AppCompatActivity() {
                         // Code to be executed when the interstitial ad is closed.
                     }
                 }
-
             } else {
                 startActivity(Intent(this@SelectPostTypeActivity, TemplateListActivity::class.java))
-
+                mInterstitialAd.loadAd(AdRequest.Builder().build())
                 Log.d("TAG", "The interstitial wasn't loaded yet.")
             }
         }

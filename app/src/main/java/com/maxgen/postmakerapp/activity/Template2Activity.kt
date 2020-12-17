@@ -2,25 +2,19 @@ package com.maxgen.postmakerapp.activity
 
 import android.Manifest
 import android.app.Activity
-import android.content.ContentValues
-import android.content.Context
-import android.content.ContextWrapper
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.AssetManager
 import android.database.Cursor
 import android.graphics.*
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
-import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.SeekBar
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintSet
@@ -322,8 +316,6 @@ class Template2Activity : AppCompatActivity(), OnAddImagesListener, OnTemplateCl
                             cursor.close()
                         }
                     }
-
-
                 }
             }
         }
@@ -404,6 +396,7 @@ class Template2Activity : AppCompatActivity(), OnAddImagesListener, OnTemplateCl
                             if (checkPermission())
                                 MyUtils.saveMediaToStorage(this@Template2Activity, post)
                             else requestPermission()
+                            mInterstitialAd.loadAd(AdRequest.Builder().build())
 
                         }
                     }
@@ -412,6 +405,7 @@ class Template2Activity : AppCompatActivity(), OnAddImagesListener, OnTemplateCl
                     if (checkPermission())
                         MyUtils.saveMediaToStorage(this, post)
                     else requestPermission()
+                    mInterstitialAd.loadAd(AdRequest.Builder().build())
 
                     Log.d("TAG", "The interstitial wasn't loaded yet.")
                 }
@@ -442,112 +436,19 @@ class Template2Activity : AppCompatActivity(), OnAddImagesListener, OnTemplateCl
                         }
 
                         override fun onAdClosed() {
-
                             saveImageToInternalStorage(post)
-                            // Code to be executed when the interstitial ad is closed.
+                            mInterstitialAd.loadAd(AdRequest.Builder().build())
                         }
                     }
                 } else {
                     Log.d("TAG", "The interstitial wasn't loaded yet.")
-
                     saveImageToInternalStorage(post)
+                    mInterstitialAd.loadAd(AdRequest.Builder().build())
+
                 }
-
-
-//
-//                val imageUri = Uri.parse(
-//                    MediaStore.Images.Media.insertImage(
-//                        contentResolver, post, null, null
-//                    )
-//                )
-//                // use intent to share image
-//                // use intent to share image
-//                val share = Intent(Intent.ACTION_SEND)
-//                share.type = "image/*"
-//                share.putExtra(Intent.EXTRA_STREAM, imageUri)
-//
-//                share.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-//                startActivity(Intent.createChooser(share, "Share Image"))
-
-                //shareNewImage(post)
             }
         }
         return super.onOptionsItemSelected(item)
-    }
-
-    private fun saveMediaToStorage(bitmap: Bitmap?) {
-        //Generating a file name
-        val filename = "${System.currentTimeMillis()}.jpg"
-
-        //Output stream
-        var fos: OutputStream? = null
-
-        //For devices running android >= Q
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            //getting the contentResolver
-            contentResolver?.also { resolver ->
-
-                //Content resolver will process the contentvalues
-                val contentValues = ContentValues().apply {
-
-                    //putting file information in content values
-                    put(MediaStore.MediaColumns.DISPLAY_NAME, filename)
-                    put(MediaStore.MediaColumns.MIME_TYPE, "image/jpg")
-                    put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_PICTURES)
-                }
-
-                //Inserting the contentValues to contentResolver and getting the Uri
-                val imageUri: Uri? =
-                    resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
-
-                //Opening an outputstream with the Uri that we got
-                fos = imageUri?.let { resolver.openOutputStream(it) }
-            }
-        } else {
-            //These for devices running on android < Q
-            //So I don't think an explanation is needed here
-            val imagesDir =
-                Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
-            val image = File(imagesDir, filename)
-            fos = FileOutputStream(image)
-        }
-
-        fos?.use {
-            //Finally writing the bitmap to the output stream that we opened
-            bitmap?.compress(Bitmap.CompressFormat.JPEG, 100, it)
-            Toast.makeText(this, "Post saved", Toast.LENGTH_SHORT).show()
-        }
-    }
-
-    private fun shareNewImage(post: Bitmap?) {
-        val cw = ContextWrapper(applicationContext)
-        val directory: File = cw.getDir("imageDir", Context.MODE_PRIVATE)
-        val file = File(directory, "TempPost" + ".jpg")
-        if (!file.exists()) {
-            Log.d("path", file.toString())
-            var fos: FileOutputStream? = null
-            try {
-                fos = FileOutputStream(file)
-                post?.compress(Bitmap.CompressFormat.JPEG, 100, fos)
-
-                fos.flush()
-                fos.close()
-            } catch (e: IOException) {
-                e.printStackTrace()
-            }
-        }
-
-        val imageUri = Uri.parse(
-            "android.resource://" + packageName
-                    + "/imageDir/" + "TempPost" + ".jpg"
-        )
-        val shareImage = Intent()
-        shareImage.action = Intent.ACTION_SEND
-        shareImage.putExtra(Intent.EXTRA_STREAM, imageUri)
-        shareImage.type = "image/jpeg"
-        shareImage.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-        startActivity(Intent.createChooser(shareImage, "send"))
-
     }
 
     private fun saveImageToInternalStorage(post: Bitmap?) {

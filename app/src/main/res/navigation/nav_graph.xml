@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/homeFragment">
+
+    <fragment
+        android:id="@+id/homeFragment"
+        android:name="com.maxgen.postmakerapp.fragment.HomeFragment"
+        android:label="fragment_home"
+        tools:layout="@layout/fragment_home" >
+        <action
+            android:id="@+id/action_homeFragment_to_profileFragment"
+            app:destination="@id/profileFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_templateListFragment"
+            app:destination="@id/templateListFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_createPostFragment2"
+            app:destination="@id/createPostFragment2" />
+    </fragment>
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="com.maxgen.postmakerapp.fragment.ProfileFragment"
+        android:label="fragment_profile"
+        tools:layout="@layout/fragment_profile" />
+    <fragment
+        android:id="@+id/templateListFragment"
+        android:name="com.maxgen.postmakerapp.fragment.TemplateListFragment"
+        android:label="fragment_template_list"
+        tools:layout="@layout/fragment_template_list" />
+    <fragment
+        android:id="@+id/createPostFragment2"
+        android:name="com.maxgen.postmakerapp.fragment.CreatePostFragment"
+        android:label="CreatePostFragment" />
+</navigation>

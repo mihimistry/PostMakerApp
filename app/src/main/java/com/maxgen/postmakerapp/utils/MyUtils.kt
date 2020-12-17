@@ -33,7 +33,7 @@ object MyUtils {
 
     fun saveMediaToStorage(context: Context, bitmap: Bitmap?) {
         //Generating a file name
-        val filename = "${System.currentTimeMillis()}.jpg"
+        val filename = "post_${System.currentTimeMillis()}.jpg"
 
         //Output stream
         var fos: OutputStream? = null
